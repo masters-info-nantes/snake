@@ -1,0 +1,1 @@
+class=org.nantes.extensible.tp1.extensions.AfficheurTiers
