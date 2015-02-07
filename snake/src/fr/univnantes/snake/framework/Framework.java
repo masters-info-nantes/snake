@@ -9,13 +9,24 @@ import java.util.Set;
 public class Framework {
 	
 	private static String configFilePath = "ressources/settings.txt";
-	private PluginLoader pluginLoader;
+	public  PluginLoader pluginLoader;
 	
-	public Framework(){
+	private String startPluginName;
+	
+	public Framework() throws IOException{
 		this.pluginLoader = new PluginLoader();
+		this.startPluginName = "";
+		
+		this.loadConfiguration();
+		this.pluginLoader.loadPluginsList();
 	}
 	
-	public void loadConfiguration() throws IOException{
+	/**
+	 * Load framework configuration file located
+	 * at snake/ressources/settings.txt
+	 * @throws IOException
+	 */
+	private void loadConfiguration() throws IOException{
 		FileReader configFile;
 		try {
 			configFile = new FileReader(Framework.configFilePath);
@@ -32,10 +43,17 @@ public class Framework {
 			throw new IOException("Unable to load config file as property file");
 		}
 		
-		pluginLoader.setPluginsPath(configReader.getProperty("pluginspath"));
+		this.pluginLoader.setPluginsPath(configReader.getProperty("pluginspath"));
+		this.startPluginName = configReader.getProperty("startplugin");
 	}
 	
-	public Set<String> listPlugins(){
-		return this.pluginLoader.listPlugins();
+	/**
+	 * Run start plugin given in configuration file
+	 * with startplugin parameter
+	 * @throws IOException
+	 */
+	public void runStartPlugin() throws IOException{
+		MGSApplication startPlugin = this.pluginLoader.loadApplication(this.startPluginName);
+		startPlugin.run();
 	}
 }
