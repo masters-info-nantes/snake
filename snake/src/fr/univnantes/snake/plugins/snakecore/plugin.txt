@@ -1,1 +1,2 @@
+runnable=1
 mainClass=fr.univnantes.snake.plugins.snakecore.Snake

@@ -1,0 +1,2 @@
+mainClass=fr.univnantes.snake.plugins.shellgooddisplay.ShellGoodDisplay
+category=fr.univnantes.snake.plugins.snakecore.interfaces.Display

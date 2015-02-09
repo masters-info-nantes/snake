@@ -92,11 +92,55 @@ public class PluginLoader {
 	}
 	
 	/**
+	 * Load plugin configuration file called plugin.txt and 
+	 * located in plugin directory
+	 * @param pluginName plugin directory
+	 * @return plugin configuration as Plugin object
+	 * @throws IOException report to the exception message
+	 */
+	private Plugin loadPluginConfiguration(String pluginName) throws IOException {
+		FileReader configFile;
+		Properties configReader = new Properties();
+		
+		try {
+			configFile = new FileReader(this.pluginsPath + "/" + pluginName + "/plugin.txt");
+			configReader.load(configFile);			
+		} 
+		catch (FileNotFoundException e) {
+			throw new FileNotFoundException("Config file missing for " + pluginName + " plugin. Please add plugin.txt file in plugin directory.");
+		} 
+		catch (IOException e) {
+			throw new IOException("Malformed configuration file for plugin " + pluginName + ". Please check your plugin.txt file.");
+		}
+		
+		String runnableString = configReader.getProperty("runnable"),
+			   category  = configReader.getProperty("category"),
+			   mainClass = configReader.getProperty("mainClass");
+		
+		boolean runnable = "1".equals(runnableString) ? true : Boolean.parseBoolean(runnableString);
+		
+		if(!runnable && category == null){
+			throw new IOException("Unable to load " + pluginName + " plugin. Please provide category for non runnable plugin in plugin.txt.");		
+		}
+		
+		Plugin plugin = null;
+		
+		if(runnable && category == null){
+			plugin = new Plugin(pluginName, "fr.univnantes.snake.framework.MGSApplication", mainClass, runnable);
+		}
+		else {
+			plugin = new Plugin(pluginName, category, mainClass, runnable);			
+		}
+		
+		return plugin;
+	}	
+	
+	/**
 	 * Load main class of a runnable plugin. The main class is given
 	 * in plugin configuration file with mainClass parameter
 	 * @param pluginName plugin directory name
 	 * @return instance of plugin main class
-	 * @throws IOException
+	 * @throws IOException report to the exception message
 	 */
 	protected MGSApplication loadApplication(String pluginName) throws IOException{
 		Plugin plugin = this.loadPluginConfiguration(pluginName);
@@ -109,22 +153,19 @@ public class PluginLoader {
 			objet = classe.newInstance();			
 		} 
 		catch (ClassNotFoundException e) {
-			System.err.println("Main class " + plugin.getMainClass() + " for plugin " + pluginName + " not found");
-			e.printStackTrace();
-			return null;
+			throw new IOException("Main class " + plugin.getMainClass() + " for plugin " + pluginName + " not found");
 		}
 		catch (InstantiationException | IllegalAccessException e) {
-			System.err.println("Cannot load " + plugin.getMainClass() + " class");
-			e.printStackTrace();
-			return null;
+			throw new IOException("Cannot load " + plugin.getMainClass() + " class");
 		}		
 
     	if(!MGSApplication.class.isAssignableFrom(classe)){
-    		throw new IOException("Cannot load " + plugin.getMainClass() + " for in " + pluginName + " because it does not extends from MGSApplication class");
+    		throw new IOException("Cannot load " + plugin.getMainClass() + " for " + pluginName + " plugin because it does not extends from MGSApplication class");
     	}
     	
     	MGSApplication application = (MGSApplication)objet;
     	application.pluginsLoader = this;
+    	application.currentPlugin = plugin;
     	
     	this.loadApplicationInterfaces(plugin);
     	
@@ -153,45 +194,35 @@ public class PluginLoader {
 	}
 
 	/**
-	 * Load plugin configuration file called plugin.txt and 
-	 * located in plugin directory
-	 * @param pluginName plugin directory
-	 * @return plugin configuration as Plugin object
-	 * @throws IOException
+	 * Returns instance of the given plugin main class. Exceptions ensures that
+	 * the given object is a subtype of the plugin category
+	 * @param plugin plugin to load main class from
+	 * @return instance of the plugin main class
+	 * @throws IOException report to the exception message
 	 */
-	private Plugin loadPluginConfiguration(String pluginName) throws IOException {
-		FileReader configFile;
-		Properties configReader = new Properties();
-		
+	public Object loadPlugin(Plugin plugin) throws IOException{
+		Class<?> mainClass, implementedClass;
+    	Object objet = null;
+    	
 		try {
-			configFile = new FileReader(this.pluginsPath + "/" + pluginName + "/plugin.txt");
-			configReader.load(configFile);			
+			mainClass = this.loader.loadClass(plugin.getMainClass());
+			implementedClass = this.loader.loadClass(plugin.getCategory());			
+			objet = mainClass.newInstance();			
 		} 
-		catch (FileNotFoundException e) {
-			throw new FileNotFoundException("Config file missing for " + pluginName + "plugin. Please add plugin.txt file in plugin directory.");
-		} 
-		catch (IOException e) {
-			throw new IOException("Malformed configuration file for plugin " + pluginName + ". Please check your plugin.txt file.");
+		catch (ClassNotFoundException e) {
+			throw new IOException("Class " + plugin.getMainClass() + " for plugin " + plugin.getName() + " not found");
 		}
+		catch (InstantiationException | IllegalAccessException e) {
+			throw new IOException("Cannot load " + plugin.getMainClass() + " class");
+		}		
 		
-		String category  = configReader.getProperty("category"),
-			   mainClass = configReader.getProperty("mainClass");
-				
-		Plugin plugin = null;
+	   	if(!implementedClass.isAssignableFrom(mainClass)){
+    		throw new IOException("Cannot load " + plugin.getMainClass() + " mainClass for " + plugin.getName() + " plugin because it does not implements given category interface " + implementedClass.getName());
+    	}
 		
-		if(mainClass != null){
-			plugin = new Plugin(pluginName, "MGSApplication", mainClass);
-		}
-		else if(category == null){
-			throw new IOException("Unable to load " + pluginName + " plugin. Please give a mainClass or a category in plugin.txt.");
-		}
-		else {
-			plugin = new Plugin(pluginName, category);			
-		}
-		
-		return plugin;
+		return objet;
 	}
-
+	
 	protected Set<String> getRunnablePluginsList(){
 		return this.runnablePlugins.keySet();
 	}

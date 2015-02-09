@@ -4,19 +4,13 @@ public class Plugin {
 	private String name;
 	private String category;
 	private String mainClass;
+	private boolean runnable;
 	
-	public Plugin(String name, String category, String mainClass){
+	public Plugin(String name, String category, String mainClass, boolean runnable){
 		this.name = name;
 		this.category = category;
 		this.mainClass = mainClass;
-	}
-	
-	public Plugin(String name, String category){
-		this(name, category, "");
-	}
-
-	public boolean isRunnable(){
-		return "MGSApplication".equals(this.category);
+		this.runnable = runnable;
 	}
 	
 	public String getName() {
@@ -35,16 +29,17 @@ public class Plugin {
 		this.mainClass = mainClass;
 	}
 	
+	public boolean isRunnable(){
+		return this.runnable;
+	}	
+	
 	@Override
 	public String toString(){
 		StringBuilder text = new StringBuilder();
 		text.append("[" + this.name + "]\n");
 		text.append("category: " + this.category + "\n");
-		
-		if(this.isRunnable()){
-			text.append("mainClass: " + this.mainClass + "\n");
-		}
-		
+		text.append("mainClass: " + this.mainClass + "\n");
+		text.append("runnable: " + (this.runnable ? "yes" : "no") + "\n");
 		return text.toString();
 	}
 }
