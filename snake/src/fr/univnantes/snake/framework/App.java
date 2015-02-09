@@ -7,6 +7,7 @@ public class App {
 	public static void main(String[] args) {
 		Framework framework = null;
 		
+		System.out.println("Framework starts\n----------------");
 		try {
 			framework = new Framework();
 		} catch (IOException e) {
@@ -15,12 +16,14 @@ public class App {
 			System.exit(0);
 		}
 		
-		System.out.println("Run start plugin\n----------------\n");
+		System.out.println("\nRun " + framework.getStartPluginName() + " as main plugin\n----------------\n");
 		try {
 			framework.runStartPlugin();
 		} catch (IOException e) {
 			System.err.println("Cannot run start plugin");
 			e.printStackTrace();
 		}
+		
+		System.out.println("\nFramework ends");
 	}
 }

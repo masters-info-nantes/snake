@@ -27,24 +27,22 @@ public class Framework {
 	 * @throws IOException
 	 */
 	private void loadConfiguration() throws IOException{
-		FileReader configFile;
 		try {
-			configFile = new FileReader(Framework.configFilePath);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			throw new FileNotFoundException("Config file missing at " + Framework.configFilePath);
-		} 
-		
-		Properties configReader = new Properties();
-		try {
+			FileReader configFile = new FileReader(Framework.configFilePath);
+			Properties configReader = new Properties();
 			configReader.load(configFile);
-		} catch (IOException e) {
+			
+			this.pluginLoader.setPluginsPath(configReader.getProperty("pluginspath"));
+			this.startPluginName = configReader.getProperty("startplugin");			
+		}
+		catch (FileNotFoundException e) {
+				e.printStackTrace();
+				throw new FileNotFoundException("Config file missing at " + Framework.configFilePath);
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
 			throw new IOException("Unable to load config file as property file");
 		}
-		
-		this.pluginLoader.setPluginsPath(configReader.getProperty("pluginspath"));
-		this.startPluginName = configReader.getProperty("startplugin");
 	}
 	
 	/**
@@ -55,5 +53,9 @@ public class Framework {
 	public void runStartPlugin() throws IOException{
 		MGSApplication startPlugin = this.pluginLoader.loadApplication(this.startPluginName);
 		startPlugin.run();
+	}
+	
+	public String getStartPluginName(){
+		return this.startPluginName;
 	}
 }
