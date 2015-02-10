@@ -46,8 +46,9 @@ public class PluginLoader {
 	 */
 	protected void loadPluginsList(){
 		
-		List<URL> pluginsPaths = new ArrayList<URL>();
+		System.out.println("Plugins loading");
 		
+		List<URL> pluginsPaths = new ArrayList<URL>();
 		File pluginsDir = new File(this.pluginsPath);
 		
 		if (pluginsDir != null && pluginsDir.exists() && pluginsDir.isDirectory()){
@@ -61,11 +62,11 @@ public class PluginLoader {
 					try {
 						plugin = this.loadPluginConfiguration(currentPlugin.getName());
 					} catch (IOException e1) {
-						System.err.println(e1.getMessage());
+						System.err.println("* " + e1.getMessage());
 						continue;
 					}
 					
-					System.out.println("Plugin " + plugin.getName() + " loaded.");
+					System.out.println("* Plugin " + plugin.getName() + " loaded.");
 					
 					if(plugin.isRunnable()){
 		        		this.runnablePlugins.put(currentPlugin.getName(), plugin);						
@@ -145,25 +146,7 @@ public class PluginLoader {
 	protected MGSApplication loadApplication(String pluginName) throws IOException{
 		Plugin plugin = this.loadPluginConfiguration(pluginName);
 		
-    	Class<?> classe;
-    	Object objet;
-    	
-		try {
-			classe = this.loader.loadClass(plugin.getMainClass());
-			objet = classe.newInstance();			
-		} 
-		catch (ClassNotFoundException e) {
-			throw new IOException("Main class " + plugin.getMainClass() + " for plugin " + pluginName + " not found");
-		}
-		catch (InstantiationException | IllegalAccessException e) {
-			throw new IOException("Cannot load " + plugin.getMainClass() + " class");
-		}		
-
-    	if(!MGSApplication.class.isAssignableFrom(classe)){
-    		throw new IOException("Cannot load " + plugin.getMainClass() + " for " + pluginName + " plugin because it does not extends from MGSApplication class");
-    	}
-    	
-    	MGSApplication application = (MGSApplication)objet;
+    	MGSApplication application = (MGSApplication) this.loadPlugin(plugin);
     	application.pluginsLoader = this;
     	application.currentPlugin = plugin;
     	
@@ -240,7 +223,7 @@ public class PluginLoader {
 		return this.mainPluginInterfaces;
 	}
 	
-	protected String getPluginsPath() {
+	public String getPluginsPath() {
 		return pluginsPath;
 	}
 

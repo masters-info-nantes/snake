@@ -1,0 +1,2 @@
+mainClass=frenchspeak.French
+category=hello.interfaces.Speak

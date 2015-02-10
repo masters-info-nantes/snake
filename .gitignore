@@ -1,2 +1,7 @@
 .metadata/
 RemoteSystemsTempFiles/
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc

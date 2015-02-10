@@ -43,6 +43,10 @@ public class Framework {
 			e.printStackTrace();
 			throw new IOException("Unable to load config file as property file");
 		}
+		
+		System.out.println("Framework configuration");
+		System.out.println("* plugins path:  " + this.pluginLoader.getPluginsPath());
+		System.out.println("* start plugin: " + this.startPluginName + "\n");
 	}
 	
 	/**

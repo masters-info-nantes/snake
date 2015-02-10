@@ -1,0 +1,2 @@
+runnable=1
+mainClass=hello.Hello

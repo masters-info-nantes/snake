@@ -19,7 +19,7 @@ public class Snake extends MGSApplication{
 		Set<String> categories = this.pluginsLoader.getMainPluginCategories();
 		for (String string : categories) {
 			System.out.println(string);
-		}
+		}		
 		
 		System.out.println("\nList of available plugins:");		
 		Collection<Plugin> pluginList = this.pluginsLoader.getClassicPlugins();

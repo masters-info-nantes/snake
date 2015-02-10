@@ -1,0 +1,249 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{hyperref} 
+\usepackage[frenchb]{babel}
+
+\usepackage{listings}	   
+\lstdefinestyle{customstyle}{
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                                                                                       
+    tabsize=4,
+    frame=single,
+    moredelim=[is][\underbar]{_}{_}
+}
+\lstset{style=customstyle}
+
+\title{MGS plugin framework manual}
+\author{Antoine Forgerou \and David Drevet \and Jérémy Bardon}
+\date{}
+	
+\begin{document}
+	\renewcommand{\contentsname}{Sommaire}
+	\renewcommand{\arraystretch}{1.8}
+	\maketitle	
+	
+	\vspace{0.80cm}
+	\tableofcontents	
+
+	\thispagestyle{empty}	
+	\setcounter{page}{0}
+	\newpage
+	
+\begin{abstract}
+Le framework MGS permet de gérer de manière transparente la modularité des 
+applications basées sur l'utilisation de plugins. Plutot que d'obliger ces 
+utilisateurs à remplir de long fichiers de configurations, nous avons choisi 
+le plus possible de nous concentrer sur une architecture de fichier la moins
+contraignante possible.
+\end{abstract}
+
+\section{Organisation du framework}
+\subsection{Configuration}
+Il existe un seul fichier de configuration qui permet d'ajuster le fonctionnement 
+du framework. Ce fichier se nomme \emph{settings.txt} et se trouve dans le 
+répertoire \emph{ressources} au même niveau que les fichier sources internes au 
+framework.
+
+\begin{table}[h]
+\centering
+	\begin{tabular}{lp{9cm}}
+		pluginspath & Chemin vers le dossier qui contient tout les plugins\\
+					 
+		startplugin & Nom du plugin\footnote{Il s'agit du nom du dossier du 
+		plugin} à charger au démarrage. Obligatoirement runnable.\\					 
+	\end{tabular}	
+\caption{Paramètres du fichier settings.txt}
+\end{table}
+	
+\subsection{Plugins}
+Le dossier plugin renseigné par \emph{pluginpath} est le répertoire qui contient 
+tout les plugins que le framework pourra charger. On distingue deux types de 
+plugins:
+
+\begin{description}
+	\item[Runnable] Plugin principal qui peut etre démarré par le framework s'il 
+	renseigné comme \emph{startplugin} dans le fichier de configuration du 
+	framework.
+	
+	\item[Classic] Plugin annexe qui fourni des classes respectant les interfaces 
+	définies par un ou plusieurs plugin(s) runnable qui l'utiliseront.
+\end{description}
+
+\subsubsection{Fichier de configuration}
+Chaque plugin -- quelque soit son type -- doit respecter une certaine architecture 
+en termes d'organisation de son dossier. En effet, un plugin doit obligatoirement 
+fournir un fichier \emph{plugin.txt} qui le décrit et donne des informations sur 
+comment il peut etre utilisé.
+
+\begin{table}[h]\label{tab:plugintxt}
+\centering
+	\begin{tabular}{lp{10cm}}
+		runnable & Indique si le plugin est un plugin runnable ou classic. 
+		Peut être égal à \emph{0/1} ou \emph{true/false}.\\				
+		
+		category & Classe ou interface que respecte le plugin. Pour un plugin 
+		runnable ce sera toujours \emph{fr.univnantes.snake.framwork.MGSApplication} 
+		qui sera rempli automatiquement par le framework. Dans le cas d'un plugin 
+		classique ce sera une interface définie par un plugin runnable.\\
+		
+		mainClass & Classe principale qui sera chargée par le framework. 
+		Elle doit implémenter ou hériter de celle donnée par la categorie.\\
+	\end{tabular}	
+\caption{Paramètres d'un fichier plugin.txt}
+\end{table}
+
+\subsubsection{Détail sur les plugins runnable}\label{sss:DetailsRunnable}
+Les plugins principaux sont capables de définir des interfaces afin de s'assurer 
+que les plugins qu'ils utiliseront répondent à leurs besoins.
+\\\\
+Plutôt que de donner la liste des interfaces dans le fichier de configuration -- 
+ce qui lourd -- nous avons choisi d'obliger l'utilisateur à placer ces interfaces 
+dans un sous-répertoire \emph{interfaces}. Ceci est moins contraignant en plus du 
+fait que des utilisateurs organisées les auraient de toutes façons rassemblés 
+dans un package à part.
+
+\section{Utilisation}
+\subsection{Créer un plugin principal}
+Pour commencer, il est nécessaire de vérifier où le framework va chercher les 
+plugins en regardant le fichier \emph{settings.txt}. Dans notre exemple ce sera 
+\emph{/home/user/plugins} mais il peut se trouver à n'importe quel endroit à 
+condition d'avoir les droits de lecture et un chemin par trop exotique avec des 
+espaces et des caractères accentués.
+\\\\
+Créons le plugin \emph{hello} qui aura pour but de dire bonjour dans différentes 
+langues selon le plugin secondaire qui sera utilisé.
+
+\begin{lstlisting}[language=bash,caption=Création du plugin hello]
+$ mkdir /home/user/plugins/hello
+$ cd /home/user/plugins/hello
+$ touch plugins.txt Hello.java
+\end{lstlisting}
+
+Le fichier de configuration indique que le plugin \emph{hello} est un plugin 
+runnable et que classe à lancer (qui implémente MGSApplication) est \emph{Hello}.
+
+\lstset{language=bash,caption=Hello plugin configuration}
+\lstinputlisting{ressources/plugin-hello.txt}
+
+La liaison entre le framework et le plugin principal se fait à travers la relation 
+d'héritage avec la classe MGSApplication. 
+\\\\
+En fait, nous avons fait ce choix car l'utilisation d'un singleton aurait pu 
+donner accès au framework à n'importe quel plugin (même secondaire). De plus, si 
+nous avions choisi de passer l'accès en paramètre de la fonction surchargée -- 
+\emph{run} -- ceci aurait obligé l'utilisateur à ajouter un attribut pour stocker 
+l'accès au framework.
+
+\lstset{language=java,caption=Hello plugin main class}
+\lstinputlisting{ressources/Hello.java}
+
+La dernière chose à faire est de dire au framework de démarrer notre plugin au 
+démarage. Pour cela, il faut renseigner le nom du plugin dans le paramètre 
+\emph{startplugin} du fichier de configuration du framework.
+
+\subsection{Définir des patrons de plugins}
+Comme expliqué précédemment (voir \ref{sss:DetailsRunnable}), il est possible de 
+définir des plugins secondaires qui seront utilisés par le plugin principal. 
+Tout d'abord, il faut commencer par définir le périmètre fonctionnel des 
+plugins secondaires que l'on veut à travers une interface.
+
+\lstset{language=java,caption=Speak interface for Hello plugin}
+\lstinputlisting{ressources/Speak.java}
+
+La prochaine étape consiste à créer un nouveau plugin -- \emph{frenchspeak} par 
+exemple -- qui aura pour catégorie \emph{Speak}.
+
+\begin{lstlisting}[language=bash,caption=Création du plugin secondaire frenchspeak]
+$ mkdir /home/user/plugins/frenchspeak
+$ cd /home/user/plugins/frenchspeak
+$ touch plugins.txt French.java
+\end{lstlisting}
+
+Ce nouveau plugin aura pour classe principale \emph{French} qui implémentera 
+l'interface \emph{Speak} définie dans le plugin \emph{Hello} plus tôt.
+\lstset{language=bash,caption=FrenchSpeak plugin configuration}
+\lstinputlisting{ressources/plugin-frenchspeak.txt}
+
+
+\lstset{language=java,caption=FrenchSpeak plugin main class}
+\lstinputlisting{ressources/French.java}
+
+\subsection{Appels au framework}
+Etant donné qu'un plugin principal peut utiliser des plugins secondaires gérés 
+par le framework, il est possible d'instancier des plugins secondaires à 
+partir d'un plugin principal.
+\\\\
+La classe \emph{Hello} du plugin \emph{hello} hérite de la classe 
+\emph{MGSApplication} et c'est ce lien qui va permettre de faire des appels 
+au framework. Cette super-classe possède deux attributs accessibles par le plugin:
+\emph{currentPlugin} et \emph{pluginLoader}. Le premier regroupe tout simplement 
+la configuration du plugin courant -- hello -- mais le second donne accès au 
+gestionnaire de plugins.
+
+\begin{table}[h]
+	\begin{tabular}{|l|}
+		\hline
+		\texttt{String getPluginsPath()}\\
+		\hline
+		Chemin vers le dossier où se trouvent les plugins\\
+		\hline
+			
+		\hline
+		\texttt{Set<String> getClassicPluginsList()}\\
+		\hline
+		Nom de tout les plugins chargés par le framework (exepté les \\
+		plugins	principaux).\\
+		\hline
+
+		\hline
+		\texttt{Collection<Plugin> getClassicPlugins()}\\
+		\hline
+		Configuration de tout les plugins chargés par le framework (exepté les\\ 
+		plugins	principaux).\\
+		\hline
+	
+		\hline
+		\texttt{Set<String> getMainPluginCategories()}\\
+		\hline
+		Nom de toutes les catégories de plugins définies par le plugin courrant.\\
+		\hline
+	
+		\hline
+		\texttt{Object loadPlugin(Plugin plugin) throws IOException}\\
+		\hline
+		Charge le plugin donné en paramètre. Cette fonction assure que le plugin\\
+		donné est bien une sous-classe de sa catégorie.\\
+		\hline
+	\end{tabular}	
+\caption{Méthodes du gestionnaire de plugins}
+\end{table}
+
+\section{Fonctionnement interne}
+Lors d'une première phase, le framework va lire son fichier de configuration -- 
+\emph{settings.txt} -- pour trouver le chemin vers le dossier des plugins. 
+Ensuite, il va scanner les sous-dossiers, lire le fichier de configuration 
+\emph{plugins.txt} et stocker la liste des plugins dont la configuration est valide.
+
+\begin{quote}
+	\textbf{Attention !} Le framework indique au démarrage pour chaque plugin 
+	s'il a été chargé ou non. 
+	\\\\
+	Certaines propriétés du fichier \emph{plugin.txt} sont déduites par le 
+	framework: \emph{runnable} est faux par défaut et ce n'est pas obligé de 
+	donner la \emph{category} pour un plugin principal car c'est toujours la 
+	même (voir \ref{tab:plugintxt}).
+\end{quote}
+
+Une fois cette étape de chargement de la liste des plugins, le framework va 
+démarrer le plugin par défaut indiqué avec \emph{startplugin} dans son fichier 
+de configuration.
+\end{document}
