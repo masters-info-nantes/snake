@@ -27,15 +27,19 @@ public class PluginLoader {
 	
 	private String pluginsPath;
 	private Map<String, Plugin> runnablePlugins;
-	private Map<String, Plugin> classicPlugins;	
+	private Map<String, Plugin> classicPlugins;
+	
 	private Set<String> mainPluginInterfaces;
+	private Map<String, List<Plugin>> pluginsByCategories;
 	private URLClassLoader loader;
 	
 	public PluginLoader(){
 		this.pluginsPath = "";
 		this.runnablePlugins = new HashMap<String, Plugin>();
-		this.classicPlugins = new HashMap<String, Plugin>();	
+		this.classicPlugins = new HashMap<String, Plugin>();
+		
 		this.mainPluginInterfaces = new HashSet<String>();
+		this.pluginsByCategories = new HashMap<String, List<Plugin>>();
 	}
 
 	/**
@@ -72,7 +76,17 @@ public class PluginLoader {
 		        		this.runnablePlugins.put(currentPlugin.getName(), plugin);						
 					}
 					else {
-						this.classicPlugins.put(currentPlugin.getName(), plugin);	
+						this.classicPlugins.put(currentPlugin.getName(), plugin);
+						
+						List<Plugin> sameCategoryPlugins = this.pluginsByCategories.get(plugin.getCategory());
+						if(sameCategoryPlugins == null){
+							sameCategoryPlugins = new ArrayList<Plugin>();
+						}
+						
+						sameCategoryPlugins.add(plugin);
+						if(sameCategoryPlugins.size() == 1){
+							this.pluginsByCategories.put(plugin.getCategory(), sameCategoryPlugins);
+						}
 					}
 
 	        		try {
@@ -116,7 +130,8 @@ public class PluginLoader {
 		
 		String runnableString = configReader.getProperty("runnable"),
 			   category  = configReader.getProperty("category"),
-			   mainClass = configReader.getProperty("mainClass");
+			   mainClass = configReader.getProperty("mainClass"),
+			   description = configReader.getProperty("description");
 		
 		boolean runnable = "1".equals(runnableString) ? true : Boolean.parseBoolean(runnableString);
 		
@@ -127,10 +142,10 @@ public class PluginLoader {
 		Plugin plugin = null;
 		
 		if(runnable && category == null){
-			plugin = new Plugin(pluginName, "fr.univnantes.snake.framework.MGSApplication", mainClass, runnable);
+			plugin = new Plugin(pluginName, "fr.univnantes.snake.framework.MGSApplication", mainClass, runnable, description);
 		}
 		else {
-			plugin = new Plugin(pluginName, category, mainClass, runnable);			
+			plugin = new Plugin(pluginName, category, mainClass, runnable, description);			
 		}
 		
 		return plugin;
@@ -206,28 +221,44 @@ public class PluginLoader {
 		return objet;
 	}
 	
-	protected Set<String> getRunnablePluginsList(){
-		return this.runnablePlugins.keySet();
-	}
-
-	// Avoid dependancies
-	public Set<String> getClassicPluginsList(){
-		return this.classicPlugins.keySet();
-	}
-
-	public Collection<Plugin> getClassicPlugins(){
-		return this.classicPlugins.values();
-	}
-	
-	public Set<String> getMainPluginCategories(){
-		return this.mainPluginInterfaces;
-	}
-	
 	public String getPluginsPath() {
 		return pluginsPath;
 	}
 
 	protected void setPluginsPath(String pluginsPath) {
 		this.pluginsPath = pluginsPath;
+	}
+	
+	/**
+	 * Returns runnable plugins list
+	 * @return runnable plugins list
+	 */
+	protected Set<String> getRunnablePluginsList(){
+		return this.runnablePlugins.keySet();
+	}
+
+	/**
+	 * Returns all classic plugins.
+	 * @return all classic plugins
+	 */
+	public Collection<Plugin> getClassicPlugins(){
+		return this.classicPlugins.values();
+	}
+	
+	/**
+	 * Returns categories definied by the current main plugin
+	 * @return categories definied by main plugin
+	 */
+	public Set<String> getMainPluginCategories(){
+		return this.mainPluginInterfaces;
+	}
+	
+	/**
+	 * Returns all plugins from the given category
+	 * @param category category of returned plugins
+	 * @return all plugins with the given category
+	 */
+	public List<Plugin> getClassicPluginsByCategory(String category){
+		return this.pluginsByCategories.get(category);
 	}
 }

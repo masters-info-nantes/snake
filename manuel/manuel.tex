@@ -195,14 +195,7 @@ gestionnaire de plugins.
 		\texttt{String getPluginsPath()}\\
 		\hline
 		Chemin vers le dossier où se trouvent les plugins\\
-		\hline
-			
-		\hline
-		\texttt{Set<String> getClassicPluginsList()}\\
-		\hline
-		Nom de tout les plugins chargés par le framework (exepté les \\
-		plugins	principaux).\\
-		\hline
+		\hline			
 
 		\hline
 		\texttt{Collection<Plugin> getClassicPlugins()}\\
@@ -212,11 +205,18 @@ gestionnaire de plugins.
 		\hline
 	
 		\hline
-		\texttt{Set<String> getMainPluginCategories()}\\
+		\texttt{List<Plugin> getClassicPluginsByCategory(String category)}\\
 		\hline
-		Nom de toutes les catégories de plugins définies par le plugin courrant.\\
+		Tout les plugins secondaires ayant la catégorie donnée\\
 		\hline
-	
+
+		\hline
+		\texttt{Set<String> getClassicPluginsList()}\\
+		\hline
+		Nom de tout les plugins chargés par le framework (exepté les \\
+		plugins	principaux).\\
+		\hline
+			
 		\hline
 		\texttt{Object loadPlugin(Plugin plugin) throws IOException}\\
 		\hline

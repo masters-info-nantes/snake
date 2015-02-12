@@ -5,12 +5,14 @@ public class Plugin {
 	private String category;
 	private String mainClass;
 	private boolean runnable;
+	private String description;
 	
-	public Plugin(String name, String category, String mainClass, boolean runnable){
+	public Plugin(String name, String category, String mainClass, boolean runnable, String description){
 		this.name = name;
 		this.category = category;
 		this.mainClass = mainClass;
 		this.runnable = runnable;
+		this.description = (description != null && !"".equals(description)) ? description : "-";
 	}
 	
 	public String getName() {
@@ -33,6 +35,10 @@ public class Plugin {
 		return this.runnable;
 	}	
 	
+	public String getDescription(){
+		return this.description;
+	}
+	
 	@Override
 	public String toString(){
 		StringBuilder text = new StringBuilder();
@@ -40,6 +46,7 @@ public class Plugin {
 		text.append("category: " + this.category + "\n");
 		text.append("mainClass: " + this.mainClass + "\n");
 		text.append("runnable: " + (this.runnable ? "yes" : "no") + "\n");
+		text.append("description: " + this.description + "\n");
 		return text.toString();
 	}
 }
