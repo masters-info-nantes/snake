@@ -1,0 +1,2 @@
+runnable=1
+mainClass=fr.univnantes.snake.snakecore.Snake

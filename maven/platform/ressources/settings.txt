@@ -1,0 +1,2 @@
+pluginspath=../plugins/src/main/java/fr/univnantes/snake
+startplugin=snakecore
