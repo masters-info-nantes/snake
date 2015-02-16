@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
-//import fr.univnantes.mgsframework.MGSApplication;
-//import fr.univnantes.mgsframework.Plugin;
+import fr.univnantes.mgsframework.MGSApplication;
+import fr.univnantes.mgsframework.Plugin;
 
 import fr.univnantes.snake.snakecore.interfaces.Display;
 
-public class Snake /*extends MGSApplication*/{
+public class Snake extends MGSApplication{
 
-	//@Override
+	@Override
 	public void run() {
-		/*
+		
 		System.out.println("-> Snake plugin");
 		System.out.println("\n" + this.currentPlugin);
 		
@@ -42,6 +42,5 @@ public class Snake /*extends MGSApplication*/{
 		}		
 		
 		System.out.println("\n-> Snake end");
-		*/
 	}
 }

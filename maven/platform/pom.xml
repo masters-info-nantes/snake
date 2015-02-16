@@ -34,10 +34,10 @@
 
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
+					<version>3.2</version>
 					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
+						<source>1.7</source>
+						<target>1.7</target>
 						<compilerArgument></compilerArgument>
 					</configuration>
 				</plugin>
@@ -55,11 +55,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>fr.univnantes.snake</groupId>
-			<artifactId>snake</artifactId>
-			<version>0.1</version>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

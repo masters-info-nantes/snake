@@ -25,6 +25,8 @@ import java.util.Set;
  */
 public class PluginLoader {
 	
+	private final static String mainPluginCategory = "fr.univnantes.mgsframework.MGSApplication";
+
 	private String pluginsPath;
 	private Map<String, Plugin> runnablePlugins;
 	private Map<String, Plugin> classicPlugins;
@@ -93,14 +95,15 @@ public class PluginLoader {
 
 		URL path = null;
 		try {
-			path = new URL("file:///Volumes/Data/Projets/snake/plugins/target/snake-0.1.jar");
+			path = new URL("file:///Volumes/Data/Projets/snake/maven/platform/ressources/snake-0.1.jar");
 		} 
 		catch (MalformedURLException e) {
 			System.err.println("Cannot access to jar file");
 			e.printStackTrace();
 		}		
 			
-		this.loader = new URLClassLoader(new URL[]{ path });
+		//URL currentPath = ((URLClassLoader)Thread.currentThread().getContextClassLoader()).getURLs()[0];
+		this.loader = new URLClassLoader(new URL[]{ path/*, currentPath*/ }, MGSApplication.class.getClassLoader());
 	}
 	
 	/**
@@ -139,7 +142,7 @@ public class PluginLoader {
 		Plugin plugin = null;
 		
 		if(runnable && category == null){
-			plugin = new Plugin(pluginName, "fr.univnantes.snake.framework.MGSApplication", mainClass, runnable, description);
+			plugin = new Plugin(pluginName, PluginLoader.mainPluginCategory, mainClass, runnable, description);
 		}
 		else {
 			plugin = new Plugin(pluginName, category, mainClass, runnable, description);			
@@ -196,13 +199,18 @@ public class PluginLoader {
 	 * @throws IOException report to the exception message
 	 */
 	public Object loadPlugin(Plugin plugin) throws IOException{
-		Class<?> mainClass, implementedClass;
+		Class<?> mainClass, implementedClass =null;
     	Object objet = null;
-    	System.out.println(plugin.getMainClass());
-    	implementedClass = null;
+
+/*
+for(URL url: loader.getURLs()){
+System.out.println(url);	
+}
+*/
 		try {
-			mainClass = this.loader.loadClass(plugin.getMainClass());
-			//mimplementedClass = this.loader.loadClass(plugin.getCategory());			
+			//mainClass = this.loader.loadClass(plugin.getMainClass());
+			mainClass = Class.forName(plugin.getMainClass(), true, loader);
+			implementedClass = this.loader.loadClass(plugin.getCategory());			
 			objet = mainClass.newInstance();			
 		} 
 		catch (ClassNotFoundException e) {
@@ -214,7 +222,10 @@ public class PluginLoader {
 		catch (IllegalAccessException e) {
 			throw new IOException("Cannot load " + plugin.getMainClass() + " class");			
 		}
-		
+
+		System.out.println("category: " + plugin.getCategory());
+		System.out.println("super class: " + mainClass.getSuperclass());
+		System.out.println("assignable from: " + implementedClass.isAssignableFrom(mainClass));
 	   	if(!implementedClass.isAssignableFrom(mainClass)){
     		throw new IOException("Cannot load " + plugin.getMainClass() + " mainClass for " + plugin.getName() + " plugin because it does not implements given category interface " + implementedClass.getName());
     	}

@@ -3,8 +3,6 @@ package fr.univnantes.mgsframework;
 import java.io.IOException;
 import java.util.Collection;
 
-import fr.univnantes.mgsframework.Framework;
-
 public class App {
 	public static void main(String[] args) {
 		Framework framework = null;
