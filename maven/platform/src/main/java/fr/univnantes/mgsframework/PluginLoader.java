@@ -1,5 +1,6 @@
 package fr.univnantes.mgsframework;
 
+import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -33,7 +34,7 @@ public class PluginLoader {
 	
 	private Set<String> mainPluginInterfaces;
 	private Map<String, List<Plugin>> pluginsByCategories;
-	private URLClassLoader loader;
+	private ClassLoader loader;
 	
 	public PluginLoader(){
 		this.pluginsPath = "";
@@ -102,9 +103,25 @@ public class PluginLoader {
 			e.printStackTrace();
 		}		
 			
-		//URL currentPath = ((URLClassLoader)Thread.currentThread().getContextClassLoader()).getURLs()[0];
-		this.loader = new URLClassLoader(new URL[]{ path/*, currentPath*/ }, MGSApplication.class.getClassLoader());
-	}
+		// For inheritence, must be same classloader	
+		URL currentPath = ((URLClassLoader)Thread.currentThread().getContextClassLoader()).getURLs()[0];
+		//this.loader = new URLClassLoader(new URL[]{ path, currentPath }, null);
+		//this.loader = new CustomClassLoader((URLClassLoader)MGSApplication.class.getClassLoader());
+		//this.loader.addURL(path);
+
+		// Code sale
+		try {
+   			Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+   			method.setAccessible(true);
+    		method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{ path });
+    		method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{ currentPath });
+    	}
+    	catch(java.lang.NoSuchMethodException|java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException e){
+    		e.printStackTrace();
+    	}
+
+    	this.loader = ClassLoader.getSystemClassLoader();		
+   	}
 	
 	/**
 	 * Load plugin configuration file called plugin.txt and 
@@ -208,9 +225,10 @@ System.out.println(url);
 }
 */
 		try {
-			//mainClass = this.loader.loadClass(plugin.getMainClass());
-			mainClass = Class.forName(plugin.getMainClass(), true, loader);
-			implementedClass = this.loader.loadClass(plugin.getCategory());			
+			mainClass = this.loader.loadClass(plugin.getMainClass());
+			//mainClass = Class.forName(plugin.getMainClass(), true, loader);
+			implementedClass = this.loader.loadClass(plugin.getCategory());
+			//implementedClass = Class.forName(plugin.getCategory(), true, loader);			
 			objet = mainClass.newInstance();			
 		} 
 		catch (ClassNotFoundException e) {
@@ -222,10 +240,16 @@ System.out.println(url);
 		catch (IllegalAccessException e) {
 			throw new IOException("Cannot load " + plugin.getMainClass() + " class");			
 		}
+		
+		System.out.println("class loader: " + mainClass.getClassLoader());
+		System.out.println("super loader: " + implementedClass.getClassLoader());
+		System.out.println("mgs loader: " + MGSApplication.class.getClassLoader());		
 
 		System.out.println("category: " + plugin.getCategory());
-		System.out.println("super class: " + mainClass.getSuperclass());
+		System.out.println("super class: " + mainClass.getSuperclass());		
+		System.out.println("generic super class: " + mainClass.getGenericSuperclass());
 		System.out.println("assignable from: " + implementedClass.isAssignableFrom(mainClass));
+
 	   	if(!implementedClass.isAssignableFrom(mainClass)){
     		throw new IOException("Cannot load " + plugin.getMainClass() + " mainClass for " + plugin.getName() + " plugin because it does not implements given category interface " + implementedClass.getName());
     	}
