@@ -1,2 +1,0 @@
-pluginspath=src/fr/univnantes/snake/plugins
-startplugin=snakecore

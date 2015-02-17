@@ -64,6 +64,7 @@ framework.
 \caption{Paramètres du fichier settings.txt}
 \end{table}
 	
+Ce répertoire contient également le fichier \emph{jar} qui rassemble les plugins.
 \subsection{Plugins}
 Le dossier plugin renseigné par \emph{pluginpath} est le répertoire qui contient 
 tout les plugins que le framework pourra charger. On distingue deux types de 
@@ -177,14 +178,30 @@ l'interface \emph{Speak} définie dans le plugin \emph{Hello} plus tôt.
 \lstset{language=java,caption=FrenchSpeak plugin main class}
 \lstinputlisting{ressources/French.java}
 
+\subsection{Donner les plugins au framework}
+La dernière chose à faire et donner accès au framework à nos plugins. Pour cela 
+il faut fournir le projet \emph{plugins} sour forme de \emph{jar} et le placer 
+dans le répertoire \emph{platform/ressources}.
+\\\\
+Tout les plugins étant rassemblés dans le projet maven \emph{plugins}, voici 
+la marche à suivre pour mettre à jour les mettre à jour.
+
+\begin{lstlisting}[language=bash,caption=Mise à jour des plugins]
+$ cd plugins
+$ mvn compile
+$ mvn package
+$ cp target/snake-0.1.jar ../platform/ressources
+\end{lstlisting}
+
 \subsection{Appels au framework}
 Etant donné qu'un plugin principal peut utiliser des plugins secondaires gérés 
 par le framework, il est possible d'instancier des plugins secondaires à 
 partir d'un plugin principal.
 \\\\
-La classe \emph{Hello} du plugin \emph{hello} hérite de la classe 
-\emph{MGSApplication} et c'est ce lien qui va permettre de faire des appels 
-au framework. Cette super-classe possède deux attributs accessibles par le plugin:
+La classe \emph{Hello} du plugin \emph{hello} doit implémenter la méthode 
+\emph{run} qui prend en paramètre un objet de type \emph{AppContext} et c'est 
+ce lien qui va permettre de faire des appels au framework. 
+Cette classe possède deux attributs accessibles par le plugin (via des getters):
 \emph{currentPlugin} et \emph{pluginLoader}. Le premier regroupe tout simplement 
 la configuration du plugin courant -- hello -- mais le second donne accès au 
 gestionnaire de plugins.

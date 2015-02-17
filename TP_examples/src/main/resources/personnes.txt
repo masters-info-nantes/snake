@@ -1,3 +1,0 @@
-class=org.nantes.extensible.tp1.extensions.Personne
-nom=Hello
-prenom=World
