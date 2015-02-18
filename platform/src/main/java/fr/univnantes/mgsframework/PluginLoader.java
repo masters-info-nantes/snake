@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -17,6 +18,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Plugin loader used by framework and application
@@ -54,7 +57,7 @@ public class PluginLoader {
 	protected void loadPluginsList(){
 		
 		System.out.println("Plugins loading");
-		
+		List<URL> pluginsPaths = new ArrayList<URL>();
 		File pluginsDir = new File(this.pluginsPath);
 		
 		if (pluginsDir != null && pluginsDir.exists() && pluginsDir.isDirectory()){
@@ -63,7 +66,7 @@ public class PluginLoader {
 	        for (int i = 0; i < files.length; i++) {
 	        	File currentPlugin = files[i];
 
-	        	if(currentPlugin.isDirectory()){
+	        	if(currentPlugin.isFile() && currentPlugin.getName().endsWith(".jar")){
 	        		Plugin plugin = null;
 					try {
 						plugin = this.loadPluginConfiguration(currentPlugin.getName());
@@ -73,7 +76,7 @@ public class PluginLoader {
 					}
 					
 					System.out.println("* Plugin " + plugin.getName() + " loaded.");
-					
+
 					if(plugin.isRunnable()){
 		        		this.runnablePlugins.put(currentPlugin.getName(), plugin);						
 					}
@@ -90,20 +93,22 @@ public class PluginLoader {
 							this.pluginsByCategories.put(plugin.getCategory(), sameCategoryPlugins);
 						}
 					}
+					
+	        		try {
+						pluginsPaths.add(new URL("file://" + currentPlugin.getAbsolutePath()));
+					} 
+	        		catch (MalformedURLException e) {
+	        			System.err.println("Cannot access to " + currentPlugin.getAbsolutePath() + "plugin");
+	        			e.printStackTrace();
+	        		}					
 	        	}
 	        }
 		}
 
-		URL path = null;
-		try {
-			path = new URL("file:///Volumes/Data/Projets/snake/maven/platform/ressources/snake-0.1.jar");
-		} 
-		catch (MalformedURLException e) {
-			System.err.println("Cannot access to jar file");
-			e.printStackTrace();
-		}		
-		
-		this.loader = new URLClassLoader(new URL[]{ path }, MGSApplication.class.getClassLoader()/*ClassLoader.getSystemClassLoader()*/);
+		URL[] pathArray = new URL[pluginsPaths.size()];
+		pathArray = pluginsPaths.toArray(pathArray);
+	
+		this.loader = new URLClassLoader(pathArray);
 	}
 	
 	/**
@@ -114,16 +119,18 @@ public class PluginLoader {
 	 * @throws IOException report to the exception message
 	 */
 	private Plugin loadPluginConfiguration(String pluginName) throws IOException {
-		FileReader configFile;
+		InputStream configFile;
 		Properties configReader = new Properties();
-		
+
 		try {
-			configFile = new FileReader(this.pluginsPath + "/" + pluginName + "/plugin.txt");
+			URLClassLoader configLoader = new URLClassLoader(new URL[]{ new URL("file://" + this.pluginsPath + "/" + pluginName) });
+			configFile = configLoader.getResourceAsStream("plugin.txt");			
 			configReader.load(configFile);			
+			configLoader.close();
 		} 
 		catch (FileNotFoundException e) {
 			throw new FileNotFoundException("Config file missing for " + pluginName + " plugin. Please add plugin.txt file in plugin directory.");
-		} 
+		}
 		catch (IOException e) {
 			throw new IOException("Malformed configuration file for plugin " + pluginName + ". Please check your plugin.txt file.");
 		}
@@ -175,19 +182,41 @@ public class PluginLoader {
 	 * @param plugin Runnable plugin (extends from MGSApplication)
 	 */
 	private void loadApplicationInterfaces(Plugin plugin) {
-		File interfaceDir = new File(this.pluginsPath + "/" + plugin.getName() + "/interfaces/");
-		
-		if (interfaceDir != null && interfaceDir.exists() && interfaceDir.isDirectory()){
-	        File[] interfaces = interfaceDir.listFiles();
-	        
-	        for (int i = 0; i < interfaces.length; i++) {
-	        	File currentInterface = interfaces[i];
 
-	        	if(currentInterface.isFile() && currentInterface.getName().endsWith(".java")){
-	        		String interfaceName = currentInterface.getName();
-	        		this.mainPluginInterfaces.add(interfaceName.substring(0, interfaceName.lastIndexOf('.')));
-	        	}
-	        }
+		ZipInputStream jarFile = null;
+		try {
+			URL pluginFile = new URL("file://" + this.pluginsPath + "/" + plugin.getName());
+			jarFile = new ZipInputStream(pluginFile.openStream());			
+		} 
+		catch (MalformedURLException e) {
+			System.err.println("Cannot access to " + plugin.getName() + " file");
+			return;
+		} catch (IOException e) {
+			System.err.println("Cannot open " + plugin.getName() + " file");
+			return;
+		}
+		
+		ZipEntry currentFile = null;
+
+	    try {
+			while((currentFile = jarFile.getNextEntry()) != null ) {
+			    String fileName = currentFile.getName();
+			    String pluginInterfacePath = plugin.getName().split("-")[0] + "/interfaces/";
+			    
+			    if(fileName.startsWith(pluginInterfacePath)){
+			    	String className = fileName.substring(
+			    				pluginInterfacePath.length(), 
+			    				fileName.length()
+			    	);
+			    
+			    	if(!className.isEmpty() && className.endsWith(".class")){
+			    		this.mainPluginInterfaces.add(className.split("\\.")[0]);			    		
+			    	}
+
+			    }
+			}
+		} catch (IOException e) {
+			System.out.println("Cannot browse " + plugin.getName() + " file");
 		}
 	}
 

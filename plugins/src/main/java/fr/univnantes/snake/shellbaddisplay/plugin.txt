@@ -1,2 +1,0 @@
-mainClass=fr.univnantes.snake.shellbaddisplay.ShellBadDisplay
-category=fr.univnantes.snake.snakecore.interfaces.Display

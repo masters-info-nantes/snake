@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class Framework {
 	
-	private static String configFilePath = "ressources/settings.txt";
+	private static String configFilePath = "resources/settings.txt";
 	public  PluginLoader pluginLoader;
 	
 	private String startPluginName;

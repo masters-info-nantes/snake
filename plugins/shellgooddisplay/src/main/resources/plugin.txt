@@ -1,0 +1,2 @@
+mainClass=shellgooddisplay.ShellGoodDisplay
+category=snakecore.interfaces.Display

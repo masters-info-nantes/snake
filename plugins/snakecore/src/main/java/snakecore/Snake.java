@@ -1,4 +1,4 @@
-package fr.univnantes.snake.snakecore;
+package snakecore;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -8,7 +8,7 @@ import fr.univnantes.mgsframework.MGSApplication;
 import fr.univnantes.mgsframework.AppContext;
 import fr.univnantes.mgsframework.Plugin;
 
-import fr.univnantes.snake.snakecore.interfaces.Display;
+import snakecore.interfaces.Display;
 
 public class Snake implements MGSApplication{
 

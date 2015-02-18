@@ -1,6 +1,6 @@
-package fr.univnantes.snake.shellgooddisplay;
+package shellgooddisplay;
 
-import fr.univnantes.snake.snakecore.interfaces.Display;
+import snakecore.interfaces.Display;
 
 public class ShellGoodDisplay implements Display{
 
