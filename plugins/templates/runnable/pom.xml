@@ -2,17 +2,28 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>fr.univnantes.snake</groupId>
-	<artifactId>snake</artifactId>
+	<!-- 
+		Full package name set the main class of the plugin
+		Considering the main class RunnablePlugin
+		The path will be templates/runnable/src/main/java/runnableplugin/RunnablePlugin.java 
+	-->
+	<groupId>runnableplugin</groupId>
+	<artifactId>runnableplugin</artifactId>
+
+	<!-- Your plugin version -->
 	<version>0.1</version>
 	<packaging>jar</packaging>
 
-	<name>snake</name>
+	<name>runnableplugin</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<!-- 
+		Any plugin have to use the framework 
+		Which was installed before (see README.md) 
+	-->
 	<dependencies>
 		<dependency>
 		    <groupId>fr.univnantes.mgsframework</groupId>

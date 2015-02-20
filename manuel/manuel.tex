@@ -40,23 +40,24 @@
 	
 \begin{abstract}
 Le framework MGS permet de gérer de manière transparente la modularité des 
-applications basées sur l'utilisation de plugins. Plutot que d'obliger ces 
-utilisateurs à remplir de long fichiers de configurations, nous avons choisi 
-le plus possible de nous concentrer sur une architecture de fichier la moins
-contraignante possible.
+applications basées sur l'utilisation de plugins. 
+\\\\
+Plutot que d'obliger les utilisateurs à remplir de long fichiers de configurations, 
+nous avons choisi le plus possible de nous concentrer sur une architecture de 
+fichier la moins contraignante possible.
 \end{abstract}
 
 \section{Organisation du framework}
 \subsection{Configuration}
 Il existe un seul fichier de configuration qui permet d'ajuster le fonctionnement 
 du framework. Ce fichier se nomme \emph{settings.txt} et se trouve dans le 
-répertoire \emph{ressources} au même niveau que les fichier sources internes au 
-framework.
+répertoire \emph{resources} au même niveau que les dossier \emph{src} regroupant le
+coeur du framework.
 
 \begin{table}[h]
 \centering
 	\begin{tabular}{lp{9cm}}
-		pluginspath & Chemin vers le dossier qui contient tout les plugins\\
+		pluginspath & Chemin vers le dossier qui contient tout les plugins.\\
 					 
 		startplugin & Nom du plugin\footnote{Il s'agit du nom du dossier du 
 		plugin} à charger au démarrage. Obligatoirement runnable.\\					 
@@ -64,7 +65,10 @@ framework.
 \caption{Paramètres du fichier settings.txt}
 \end{table}
 	
-Ce répertoire contient également le fichier \emph{jar} qui rassemble les plugins.
+Ce répertoire contient également un dossier \emph{plugins} qui rassemble les fichiers 
+\emph{jar} des plugins. La valeur par défaut de \emph{pluginspath} est donc 
+\emph{resources/plugins}.
+
 \subsection{Plugins}
 Le dossier plugin renseigné par \emph{pluginpath} est le répertoire qui contient 
 tout les plugins que le framework pourra charger. On distingue deux types de 
@@ -72,7 +76,7 @@ plugins:
 
 \begin{description}
 	\item[Runnable] Plugin principal qui peut etre démarré par le framework s'il 
-	renseigné comme \emph{startplugin} dans le fichier de configuration du 
+	est renseigné comme \emph{startplugin} dans le fichier de configuration du 
 	framework.
 	
 	\item[Classic] Plugin annexe qui fourni des classes respectant les interfaces 
@@ -102,13 +106,19 @@ comment il peut etre utilisé.
 \caption{Paramètres d'un fichier plugin.txt}
 \end{table}
 
+Le dépot git du projet\footnote{Projet hébergé par GitHub: 
+\href{github.com/masters-info-nantes/snake}
+{https://github.com/masters-info-nantes/snake}} regroupe les plugins développés 
+par l'équipe (répertoire plugins), on peut y trouver le plugin \emph{template} qui 
+donne une base pour créer un plugin.
+
 \subsubsection{Détail sur les plugins runnable}\label{sss:DetailsRunnable}
 Les plugins principaux sont capables de définir des interfaces afin de s'assurer 
 que les plugins qu'ils utiliseront répondent à leurs besoins.
 \\\\
 Plutôt que de donner la liste des interfaces dans le fichier de configuration -- 
 ce qui lourd -- nous avons choisi d'obliger l'utilisateur à placer ces interfaces 
-dans un sous-répertoire \emph{interfaces}. Ceci est moins contraignant en plus du 
+dans un sous-package \emph{interfaces}. Ceci est moins contraignant en plus du 
 fait que des utilisateurs organisées les auraient de toutes façons rassemblés 
 dans un package à part.
 
@@ -124,9 +134,21 @@ Créons le plugin \emph{hello} qui aura pour but de dire bonjour dans différent
 langues selon le plugin secondaire qui sera utilisé.
 
 \begin{lstlisting}[language=bash,caption=Création du plugin hello]
-$ mkdir /home/user/plugins/hello
-$ cd /home/user/plugins/hello
-$ touch plugins.txt Hello.java
+$ cd plugins
+$ cp -R templates/runnable hello
+
+$ cd hello/src/main/java/
+$ mv runnableplugin hello
+$ mv hello/RunnablePlugin.java Hello.java
+
+$ vim Hello.java
+$ cd hello
+$ vim pom.xml
+$ vim src/main/resources/plugin.txt
+$ mvn package
+$ cp target/hello-0.1.jar /platform/plugins
+
+$ mvn install
 \end{lstlisting}
 
 Le fichier de configuration indique que le plugin \emph{hello} est un plugin 
@@ -164,9 +186,20 @@ La prochaine étape consiste à créer un nouveau plugin -- \emph{frenchspeak} p
 exemple -- qui aura pour catégorie \emph{Speak}.
 
 \begin{lstlisting}[language=bash,caption=Création du plugin secondaire frenchspeak]
-$ mkdir /home/user/plugins/frenchspeak
-$ cd /home/user/plugins/frenchspeak
-$ touch plugins.txt French.java
+$ cd plugins/hello/src/main/java/hello/intefaces
+$ mv SecondaryPlugin.java Speak.java
+
+$ cd plugins
+$ cp templates/classic frenchspeak
+$ cd frenchspeak/src/main/java
+$ mv secondarypluginone frenchspeak
+
+$ cd frenchspeak
+$ vim pom.xml
+$ vim src/main/resources/plugin.txt
+
+$ mvn package
+$ cp target/frenchspeak-0.1.jar /platform/plugins
 \end{lstlisting}
 
 Ce nouveau plugin aura pour classe principale \emph{French} qui implémentera 
@@ -247,7 +280,7 @@ gestionnaire de plugins.
 \section{Fonctionnement interne}
 Lors d'une première phase, le framework va lire son fichier de configuration -- 
 \emph{settings.txt} -- pour trouver le chemin vers le dossier des plugins. 
-Ensuite, il va scanner les sous-dossiers, lire le fichier de configuration 
+Ensuite, il va scanner les jars, lire le fichier de configuration 
 \emph{plugins.txt} et stocker la liste des plugins dont la configuration est valide.
 
 \begin{quote}
@@ -261,6 +294,10 @@ Ensuite, il va scanner les sous-dossiers, lire le fichier de configuration
 \end{quote}
 
 Une fois cette étape de chargement de la liste des plugins, le framework va 
-démarrer le plugin par défaut indiqué avec \emph{startplugin} dans son fichier 
-de configuration.
+démarrer le plugin par défaut qui a été indiqué avec \emph{startplugin} dans son 
+fichier de configuration.
+
+% todo: use script
+% install framework
+
 \end{document}

@@ -26,6 +26,11 @@ $ cp target/snake-0.1.jar ../platform/ressources
 
 Finnaly, run the platform with **mvn exec:java**.
 
+## Developers
+To import the projet in eclipse use:
+```
+$ mvn eclipse:eclipse
+```
 
 ## Authors
 * Antoine Forgerou

@@ -1,0 +1,12 @@
+# This plugin is a main plugin ?
+runnable=0
+
+# Plugin main class 
+mainClass=secondarypluginone.SecondaryPluginOne
+
+# The plugin description to choose 
+# easily between plugins
+description=plugin description
+
+# Secondary plugins: main plugin interface you implemented
+category=runnableplugin.interfaces.SecondaryPlugin
