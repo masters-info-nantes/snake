@@ -5,33 +5,32 @@ import java.util.Collection;
 import java.util.Set;
 
 import fr.univnantes.mgsframework.MGSApplication;
-import fr.univnantes.mgsframework.AppContext;
 import fr.univnantes.mgsframework.Plugin;
 
 import snakecore.interfaces.Display;
 
-public class Snake implements MGSApplication{
+public class Snake extends MGSApplication{
 
 	@Override
-	public void run(AppContext app) {
+	public void run() {
 		
 		System.out.println("-> Snake plugin");
-		System.out.println("\n" + app.getCurrentPlugin());
+		System.out.println("\n" + this.currentPlugin);
 		
 		System.out.println("List of categories:");
-		Set<String> categories = app.getPluginsLoader().getMainPluginCategories();
+		Set<String> categories = this.pluginsLoader.getMainPluginCategories();
 		for (String string : categories) {
 			System.out.println(string);
 		}		
 		
 		System.out.println("\nList of available plugins:");		
-		Collection<Plugin> pluginList = app.getPluginsLoader().getClassicPlugins();
+		Collection<Plugin> pluginList = this.pluginsLoader.getClassicPlugins();
 
 		for (Plugin plugin : pluginList) {
 			System.out.println(plugin);
 			
 			try {
-				Display display = (Display) app.getPluginsLoader().loadPlugin(plugin);
+				Display display = (Display) this.pluginsLoader.loadPlugin(plugin);
 				System.out.print("sayHello: ");
 				display.sayHello();
 			} 

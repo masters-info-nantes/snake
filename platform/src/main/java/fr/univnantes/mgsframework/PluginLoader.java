@@ -1,9 +1,7 @@
 package fr.univnantes.mgsframework;
 
-import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -15,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -168,10 +165,13 @@ public class PluginLoader {
 	protected MGSApplication loadApplication(String pluginName) throws IOException{
 		Plugin plugin = this.loadPluginConfiguration(pluginName);
 		
-		AppContext.instance.setCurrentPlugin(plugin);
-		AppContext.instance.setPluginsLoader(this);
+		//AppContext.instance.setCurrentPlugin(plugin);
+		//AppContext.instance.setPluginsLoader(this);
 
     	MGSApplication application = (MGSApplication) this.loadPlugin(plugin);
+    	application.currentPlugin = plugin;
+    	application.pluginsLoader = this;
+    	
     	this.loadApplicationInterfaces(plugin);
     	
     	return application;
@@ -228,7 +228,7 @@ public class PluginLoader {
 	 * @throws IOException report to the exception message
 	 */
 	public Object loadPlugin(Plugin plugin) throws IOException{
-		Class<?> mainClass, implementedClass =null;
+		Class<?> mainClass, implementedClass;
     	Object objet = null;
 
 		try {

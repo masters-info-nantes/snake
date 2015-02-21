@@ -56,7 +56,7 @@ public class Framework {
 	 */
 	public void runStartPlugin() throws IOException{
 		MGSApplication startPlugin = this.pluginLoader.loadApplication(this.startPluginName);
-		startPlugin.run(AppContext.instance);
+		startPlugin.run();
 	}
 	
 	public String getStartPluginName(){

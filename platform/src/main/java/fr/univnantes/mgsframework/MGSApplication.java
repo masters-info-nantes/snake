@@ -1,5 +1,9 @@
 package fr.univnantes.mgsframework;
 
-public interface MGSApplication {	
-	public void run(AppContext app);
+public abstract class MGSApplication {
+	
+	protected PluginLoader pluginsLoader;
+	protected Plugin currentPlugin;
+	
+	public abstract void run();
 }
