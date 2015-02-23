@@ -1,46 +1,39 @@
 package snakecore;
 
-import java.io.IOException;
-import java.util.Collection;
+import java.util.SortedSet;
 import java.util.Set;
+import java.util.TreeSet;
 
-import fr.univnantes.mgsframework.MGSApplication;
-import fr.univnantes.mgsframework.Plugin;
+import snakecore.interfaces.MapElement;
 
-import snakecore.interfaces.Display;
+public class Snake extends MapItem {
 
-public class Snake extends MGSApplication{
+	private SortedSet<MapItem> corps;
+	
+	public Snake(){
+		super(0,0);
+		this.corps = new TreeSet<MapItem>();
+	}
+	
+	public void evolve(){
+		MapItem tail = this.corps.last();
+		MapItem newPart = new MapItem(tail.getX(), tail.getY() + 1);
+		
+		this.corps.add(newPart);
+	}
+	
+	@Override
+	public int getX() {
+		return (int) this.position.getX();
+	}
 
 	@Override
-	public void run() {
-		
-		System.out.println("-> Snake plugin");
-		System.out.println("\n" + this.currentPlugin);
-		
-		System.out.println("List of categories:");
-		Set<String> categories = this.pluginsLoader.getMainPluginCategories();
-		for (String string : categories) {
-			System.out.println(string);
-		}		
-		
-		System.out.println("\nList of available plugins:");		
-		Collection<Plugin> pluginList = this.pluginsLoader.getClassicPlugins();
+	public int getY() {
+		return (int) this.position.getY();
+	}
 
-		for (Plugin plugin : pluginList) {
-			System.out.println(plugin);
-			
-			try {
-				Display display = (Display) this.pluginsLoader.loadPlugin(plugin);
-				System.out.print("sayHello: ");
-				display.sayHello();
-			} 
-			catch (IOException e) {
-				System.err.println("Cannot load first " + plugin.getName() + " plugin");
-			}
-			
-			System.out.println();
-		}		
-		
-		System.out.println("\n-> Snake end");
+	@Override
+	public Set<MapElement> getSubElements() {
+		return (Set<MapElement>)((Object)this.corps);
 	}
 }

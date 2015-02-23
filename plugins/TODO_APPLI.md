@@ -19,6 +19,12 @@
 * Plugin de test qui questionne le framework
 * Recherche sur l'affichage graphique
 
+## Evénements
+* Déplacement du serpent
+* Colission avec un élément (avec un mur, lui même, un objectif)
+* Avancée dans le temps
+
+
 ## Developpeurs
 ```
 Antoine Forgerou - Plugins secondaires

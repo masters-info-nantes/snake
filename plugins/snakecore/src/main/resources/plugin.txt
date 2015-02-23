@@ -1,2 +1,2 @@
 runnable=1
-mainClass=snakecore.Snake
+mainClass=snakecore.SnakeCore

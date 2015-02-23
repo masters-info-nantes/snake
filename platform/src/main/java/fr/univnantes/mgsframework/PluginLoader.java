@@ -116,6 +116,19 @@ public class PluginLoader {
 	 * @throws IOException report to the exception message
 	 */
 	private Plugin loadPluginConfiguration(String pluginName) throws IOException {
+		
+		// If the plugin was allready loaded
+		Plugin mainPlugin = (Plugin) this.classicPlugins.get(pluginName),
+			   classicPlugin = (Plugin) this.runnablePlugins.get(pluginName);
+	
+		if(mainPlugin != null){
+			return mainPlugin;
+		}
+		else if(classicPlugin != null){
+			return classicPlugin;
+		}
+		
+		// Load plugin configuration
 		InputStream configFile;
 		Properties configReader = new Properties();
 
@@ -251,6 +264,17 @@ public class PluginLoader {
     	}
 		
 		return objet;
+	}
+	
+	/**
+	 * Enable to load a plugin without knowing is configuration
+	 * @param pluginName
+	 * @return An instance of the plugin
+	 * @throws IOException Can't load the plugin and get an instance
+	 */
+	public Object loadPlugin(String pluginName) throws IOException{
+		Plugin plugin = this.loadPluginConfiguration(pluginName);
+		return this.loadPlugin(plugin);
 	}
 	
 	public String getPluginsPath() {
