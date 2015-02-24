@@ -2,11 +2,20 @@ package snakecore.mocks;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
+import snakecore.exceptions.CollisionException;
+import snakecore.exceptions.OutOfMapException;
 import snakecore.interfaces.Map;
 import snakecore.interfaces.MapElement;
 
+/*
+ * WARNING:
+ * 
+ * This class is a mock (for test purpose), don't use it 
+ * for complex operations. 
+ * Create a real plugin and use it instead.
+ * 
+ */
 public class MapMock implements Map {
 
 	private Set<MapElement> elts = new LinkedHashSet<MapElement>();
@@ -24,9 +33,12 @@ public class MapMock implements Map {
 	}
 
 	@Override
-	public boolean moveElement(MapElement element) {
-		element.move();
-		return true;
+	public void moveElement(MapElement element, int x, int y) 
+			throws OutOfMapException, CollisionException
+	{
+		if(x > 3){
+			throw new OutOfMapException();
+		}	
 	}
 
 	@Override

@@ -1,10 +1,17 @@
 package snakecore.mocks;
 
-import snakecore.MapItem;
 import snakecore.interfaces.Display;
 import snakecore.interfaces.Map;
 import snakecore.interfaces.MapElement;
 
+/*
+ * WARNING:
+ * 
+ * This class is a mock (for test purpose), don't use it 
+ * for complex operations. 
+ * Create a real plugin and use it instead.
+ * 
+ */
 public class DisplayMock implements Display {
 
 	private Map map;
