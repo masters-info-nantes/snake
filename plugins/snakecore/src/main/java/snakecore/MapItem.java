@@ -36,7 +36,6 @@ public class MapItem implements MapElement {
 	}
 
 	@Override
-	public void move(int x, int y) {
-		this.setXY(x, y);
+	public void move() {
 	}
 }

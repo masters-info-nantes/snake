@@ -1,16 +1,20 @@
 package snakecore;
 
+import java.awt.Point;
 import java.util.LinkedList;
 
+import snakecore.enums.Direction;
 import snakecore.interfaces.MapElement;
 
 public class Snake extends MapItem {
 
 	private LinkedList<MapItem> corps;
+	private Direction direction;
 	
 	public Snake(){
 		super(0,0);
 		this.corps = new LinkedList<MapItem>();
+		this.direction = Direction.RIGHT;
 	}
 	
 	public void evolve(){
@@ -20,19 +24,47 @@ public class Snake extends MapItem {
 	}
 	
 	@Override
-	public void move(int x, int y){		
+	public void move(){	
+		Point nextPosition = this.nextHeadPosition();
 		if(this.corps.isEmpty()){
-			this.corps.addFirst(new MapItem(this.getX() + 1, this.getY()));
+			this.corps.addFirst(new MapItem((int)nextPosition.getX(), (int)nextPosition.getY()));
 		}
 		else {
-			MapItem head = (MapItem) this.corps.getFirst();
 			MapItem tail = (MapItem) this.corps.removeLast();
-			tail.setXY(head.getX() + 1, head.getY());
+			tail.setXY((int)nextPosition.getX(), (int)nextPosition.getY());
 			
 			this.corps.addFirst(tail);		
 		}	
 		
-		this.setXY(x, y); // obviously...		
+		this.setXY((int)nextPosition.getX(), (int)nextPosition.getY()); // obviously...		
+	}
+	
+	private Point nextHeadPosition(){
+		Point point = new Point(0,0);
+		
+		switch(this.direction){
+			case BOTTOM:
+				point = new Point(this.getX(), this.getY() + 1);
+			break;
+			
+			case LEFT:
+				point = new Point(this.getX() - 1, this.getY());				
+			break;
+			
+			case RIGHT:
+				point = new Point(this.getX() + 1, this.getY());				
+			break;
+			
+			case TOP:
+				point = new Point(this.getX(), this.getY() - 1);	
+			break;
+		}
+		
+		return point;
+	}
+	
+	public void setDirection(Direction direction){
+		this.direction = direction;
 	}
 	
 	@Override

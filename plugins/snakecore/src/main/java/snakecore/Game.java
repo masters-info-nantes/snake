@@ -1,5 +1,6 @@
 package snakecore;
 
+import snakecore.enums.Direction;
 import snakecore.interfaces.Display;
 import snakecore.interfaces.Map;
 import snakecore.mocks.DisplayMock;
@@ -36,7 +37,7 @@ public class Game {
 	public void start(){
 		this.display.show();
 		
-		while(snake.getX() < 10){ // DEBUG reasons
+		while(this.turn < 10){ // DEBUG reasons
 			try {
 				Thread.sleep(1000);
 			} 
@@ -50,9 +51,12 @@ public class Game {
 	}
 
 	public void nextTurn(){
-		this.map.moveElement(this.snake, this.snake.getX() + 1, this.snake.getY());
+		this.map.moveElement(this.snake);
 		System.out.println("> Next turn: " + turn);
 		
+		if(turn == 5){
+			this.snake.setDirection(Direction.BOTTOM);
+		}
 		this.snake.evolve();
 		
 		this.display.updateMap();	

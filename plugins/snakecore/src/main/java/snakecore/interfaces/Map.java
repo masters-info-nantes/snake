@@ -8,6 +8,6 @@ public interface Map
 	public int getWidth();
 
 	public boolean addElement(MapElement element);
-	public boolean moveElement(MapElement element, int x, int y);
+	public boolean moveElement(MapElement element);
 	public Set<MapElement> getElements();
 }
