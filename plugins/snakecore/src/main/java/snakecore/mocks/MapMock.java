@@ -25,7 +25,7 @@ public class MapMock implements Map {
 
 	@Override
 	public boolean moveElement(MapElement element, int x, int y) {
-		element.setXY(x, y);
+		element.move(x, y);
 		return true;
 	}
 

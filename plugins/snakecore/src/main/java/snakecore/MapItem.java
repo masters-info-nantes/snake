@@ -2,6 +2,7 @@ package snakecore;
 
 import java.awt.Point;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import snakecore.interfaces.MapElement;
@@ -25,12 +26,17 @@ public class MapItem implements MapElement {
 	}
 
 	@Override
-	public Set<MapElement> getSubElements() {
-		return new HashSet<MapElement>();
+	public LinkedList<MapElement> getSubElements() {
+		return new LinkedList<MapElement>();
 	}
 
 	@Override
 	public void setXY(int x, int y) {
 		this.position.setLocation(x, y);
+	}
+
+	@Override
+	public void move(int x, int y) {
+		this.setXY(x, y);
 	}
 }

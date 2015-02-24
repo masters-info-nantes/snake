@@ -1,5 +1,6 @@
 package snakecore.mocks;
 
+import snakecore.MapItem;
 import snakecore.interfaces.Display;
 import snakecore.interfaces.Map;
 import snakecore.interfaces.MapElement;
@@ -27,8 +28,9 @@ public class DisplayMock implements Display {
 				return;
 			}
 			
+			
 			for (MapElement subelt : elt.getSubElements()) {
-				System.out.print("(" + subelt.getX() + "," + subelt.getY() + ")");
+				System.out.print("(" + subelt.getX() + "," + subelt.getY() + ") ");
 			}
 		}
 	}

@@ -1,25 +1,38 @@
 package snakecore;
 
-import java.util.SortedSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.LinkedList;
 
 import snakecore.interfaces.MapElement;
 
 public class Snake extends MapItem {
 
-	private SortedSet<MapItem> corps;
+	private LinkedList<MapItem> corps;
 	
 	public Snake(){
 		super(0,0);
-		this.corps = new TreeSet<MapItem>();
+		this.corps = new LinkedList<MapItem>();
 	}
 	
 	public void evolve(){
-		MapItem tail = this.corps.last();
-		MapItem newPart = new MapItem(tail.getX(), tail.getY() + 1);
+		MapItem tail = (MapItem) this.corps.getLast();
+		MapItem newTail = new MapItem(tail.getX() - 1, tail.getY());
+		this.corps.addLast(newTail);		
+	}
+	
+	@Override
+	public void move(int x, int y){		
+		if(this.corps.isEmpty()){
+			this.corps.addFirst(new MapItem(this.getX() + 1, this.getY()));
+		}
+		else {
+			MapItem head = (MapItem) this.corps.getFirst();
+			MapItem tail = (MapItem) this.corps.removeLast();
+			tail.setXY(head.getX() + 1, head.getY());
+			
+			this.corps.addFirst(tail);		
+		}	
 		
-		this.corps.add(newPart);
+		this.setXY(x, y); // obviously...		
 	}
 	
 	@Override
@@ -31,9 +44,9 @@ public class Snake extends MapItem {
 	public int getY() {
 		return (int) this.position.getY();
 	}
-
+	
 	@Override
-	public Set<MapElement> getSubElements() {
-		return (Set<MapElement>)((Object)this.corps);
+	public LinkedList<MapElement> getSubElements() {
+		return (LinkedList<MapElement>)((Object)this.corps);
 	}
 }

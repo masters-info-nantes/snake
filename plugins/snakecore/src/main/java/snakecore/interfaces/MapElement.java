@@ -1,6 +1,8 @@
 package snakecore.interfaces;
 
-import java.util.Set;
+import java.util.LinkedList;
+
+import snakecore.MapItem;
 
 public interface MapElement
 {
@@ -8,5 +10,6 @@ public interface MapElement
 	public int getY();
 	public void setXY(int x, int y);
 
-	public Set<MapElement> getSubElements();
+	public void move(int x, int y);
+	public LinkedList<MapElement> getSubElements();
 }

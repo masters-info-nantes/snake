@@ -53,8 +53,10 @@ public class Game {
 		this.map.moveElement(this.snake, this.snake.getX() + 1, this.snake.getY());
 		System.out.println("> Next turn: " + turn);
 		
+		this.snake.evolve();
+		
 		this.display.updateMap();	
-		System.out.println();
+		System.out.println("\n");
 		
 		this.turn++;
 	}
