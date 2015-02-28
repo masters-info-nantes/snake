@@ -1,0 +1,2 @@
+mainClass=displaymock.DisplayMock
+category=snakecore.interfaces.Display
