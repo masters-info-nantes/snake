@@ -26,14 +26,16 @@ public class Game {
 
 	public Game(PluginLoader pluginLoader){
 		this.pluginLoader = pluginLoader;
-		this.snake = new Snake();
+		this.snake = new Snake(15,15);
+		snake.evolve();
+		snake.evolve();
 		this.turn = 1;
 	}
 
 	public void load(){	
 		try{	
-		this.map = (Map)this.pluginLoader.loadPlugin("mapmock-0.1.jar");
-		this.display = (Display)this.pluginLoader.loadPlugin("displaymock-0.1.jar");
+		this.map = (Map)this.pluginLoader.loadPlugin("mapGUI-0.1.jar");
+		this.display = (Display)this.pluginLoader.loadPlugin("displayGUI-0.1.jar");
 		this.gameOver = (GameOver)this.pluginLoader.loadPlugin("gameovermock-0.1.jar");
 		}
 		catch(IOException e){}		
@@ -80,7 +82,7 @@ public class Game {
 		if(turn == 5){
 			this.snake.setDirection(Direction.BOTTOM);
 		}
-		this.snake.evolve();
+		//this.snake.evolve();
 		
 		this.display.updateMap();	
 		System.out.println("\n");

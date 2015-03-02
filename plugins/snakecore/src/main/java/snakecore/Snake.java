@@ -11,9 +11,10 @@ public class Snake extends MapItem {
 	private LinkedList<MapItem> corps;
 	private Direction direction;
 	
-	public Snake(){
-		super(0,0);
+	public Snake(int x,int y){
+		super(x,y);
 		this.corps = new LinkedList<MapItem>();
+		this.corps.addFirst(new MapItem(x,y));
 		this.direction = Direction.RIGHT;
 	}
 	

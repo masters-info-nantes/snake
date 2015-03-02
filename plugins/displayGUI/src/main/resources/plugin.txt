@@ -1,0 +1,2 @@
+mainClass=displayGUI.DisplayGUI
+category=snakecore.interfaces.Display
