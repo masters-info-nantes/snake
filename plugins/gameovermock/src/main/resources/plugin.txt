@@ -1,2 +1,0 @@
-mainClass=gameovermock.GameOverMock
-category=snakecore.interfaces.GameOver

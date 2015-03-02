@@ -6,9 +6,6 @@ import snakecore.exceptions.OutOfMapException;
 import snakecore.interfaces.Display;
 import snakecore.interfaces.GameOver;
 import snakecore.interfaces.Map;
-import snakecore.mocks.DisplayMock;
-import snakecore.mocks.GameOverMock;
-import snakecore.mocks.MapMock;
 import fr.univnantes.mgsframework.PluginLoader;
 import java.io.IOException;
 
@@ -32,15 +29,11 @@ public class Game {
 
 	public void load(){	
 		try{	
-		this.map = (Map)this.pluginLoader.loadPlugin("mapmock-0.1.jar");
-		this.display = (Display)this.pluginLoader.loadPlugin("displaymock-0.1.jar");
-		this.gameOver = (GameOver)this.pluginLoader.loadPlugin("gameovermock-0.1.jar");
+			this.map = (Map)this.pluginLoader.loadPlugin("maptest-0.1.jar");
+			this.display = (Display)this.pluginLoader.loadPlugin("displaytest-0.1.jar");
+			this.gameOver = (GameOver)this.pluginLoader.loadPlugin("gameovertest-0.1.jar");
 		}
 		catch(IOException e){}		
-
-		//this.map = new MapMock();
-		//this.display = new DisplayMock();
-		//this.gameOver = new GameOverMock();
 		
 		this.display.setMap(this.map);
 		this.map.addElement(this.snake);
