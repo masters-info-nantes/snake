@@ -1,2 +1,2 @@
-pluginspath=/Volumes/Data/Projets/snake/platform/resources/plugins
+pluginspath=/home/antoine/snake/platform/resources/plugins
 startplugin=snakecore-0.1.jar

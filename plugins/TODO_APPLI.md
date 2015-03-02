@@ -10,14 +10,15 @@
 * Condition de fin de partie (timer, murs, survie, obstacles, ...)
 
 ## Todo
-* Créer le moteur
-* Définir les interfaces pour les plugins secondaires
+* Garder le dernier élément supprimé pour évolution
 * Developper des plugins secondaires
 
 ## Done
 * Conception de l'architecture du jeu
 * Plugin de test qui questionne le framework
 * Recherche sur l'affichage graphique
+* Créer le moteur
+* Définir les interfaces pour les plugins secondaires
 
 ## Evénements
 * Déplacement du serpent
@@ -28,5 +29,5 @@
 ## Developpeurs
 ```
 Antoine Forgerou - Plugins secondaires
-David Brevet - Plugin principal
+Jérémy Bardon - Plugin principal
 ```
