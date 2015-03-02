@@ -1,0 +1,2 @@
+mainClass=displaytest.DisplayTest
+category=snakecore.interfaces.Display
