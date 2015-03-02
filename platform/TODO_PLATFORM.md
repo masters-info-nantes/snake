@@ -3,10 +3,9 @@
 Voir le manuel dans [manuel/manuel.pdf](https://github.com/masters-info-nantes/snake/raw/master/manuel/manuel.pdf) qui décrit le framework, son organisation, quelques détails de fonctionnement et un example de création d'un plugin
 
 ## Todo
+* Plugin principal pour lister les plugins
 * Chemin relatif vers le jar 
-* Inclure les fichiers de configs dans le jar
 * Revoir la doc
-* Ajouter un système de dépendance qui oblige ne charge pas un plugin principal si ces dépendances ne peuvent être satisfaites
 
 ## Done
 * Scan du dossier des plugins
