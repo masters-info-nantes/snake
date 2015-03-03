@@ -28,6 +28,7 @@ public class PluginLoader {
 	
 	private final static String mainPluginCategory = "fr.univnantes.mgsframework.MGSApplication";
 
+	private String startPlugin; // for inspector
 	private String pluginsPath;
 	private Map<String, Plugin> runnablePlugins;
 	private Map<String, Plugin> classicPlugins;
@@ -37,7 +38,9 @@ public class PluginLoader {
 	private URLClassLoader loader;
 	
 	public PluginLoader(){
+		this.startPlugin = "";
 		this.pluginsPath = "";
+
 		this.runnablePlugins = new HashMap<String, Plugin>();
 		this.classicPlugins = new HashMap<String, Plugin>();
 		
@@ -316,5 +319,14 @@ public class PluginLoader {
 	 */
 	public List<Plugin> getClassicPluginsByCategory(String category){
 		return this.pluginsByCategories.get(category);
+	}
+	
+	// Only for platform inspector
+	public String getStartPlugin() {
+		return startPlugin;
+	}
+
+	protected void setStartPlugin(String startPlugin) {
+		this.startPlugin = startPlugin;
 	}
 }

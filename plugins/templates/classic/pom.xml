@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- 
+		Full package name set the main class of the plugin
+		Considering the main class SecondaryPluginOne
+		The path will be templates/classic/src/main/java/secondarypluginone/SecondaryPluginOne.java 
+	-->
+	<groupId>secondarypluginone</groupId>
+	<artifactId>secondarypluginone</artifactId>
+
+	<!-- Your plugin version -->
+	<version>0.1</version>
+	<packaging>jar</packaging>
+
+	<name>secondarypluginone</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+
+		<!-- 
+			Any plugin have to use the framework
+			Which was installed before (see README.md) 
+		-->		
+		<dependency>
+		    <groupId>fr.univnantes.mgsframework</groupId>
+		    <artifactId>mgsframework</artifactId>
+		    <version>0.1</version>
+		</dependency>
+
+		<!-- 
+			The secondary plugin is for runnableplugin so
+			it is a dependancy. The version is the one gived in
+			runnable plugin pom.xml 
+		-->		
+		<dependency>
+		    <groupId>runnableplugin</groupId>
+		    <artifactId>runnableplugin</artifactId>
+		    <version>0.1</version>
+		</dependency>		
+	</dependencies>  
+</project>

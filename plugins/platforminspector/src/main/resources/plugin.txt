@@ -1,0 +1,12 @@
+# This plugin is a main plugin ?
+runnable=1
+
+# Plugin main class 
+mainClass=platforminspector.PlatformInspector
+
+# The plugin description to choose 
+# easily between plugins
+description=GUI to visualize plaform and plugins configurations
+
+# Main plugins allways : fr.univnantes.mgsframework.MGSApplication
+category=fr.univnantes.mgsframework.MGSApplication

@@ -34,7 +34,7 @@ public class Game {
 
 		this.map = (Map)this.pluginLoader.loadPlugin("mapGUI-0.1.jar");
 		this.display = (Display)this.pluginLoader.loadPlugin("displayGUI-0.1.jar");
-		this.gameOver = (GameOver)this.pluginLoader.loadPlugin("gameovermock-0.1.jar");
+		this.gameOver = (GameOver)this.pluginLoader.loadPlugin("gameovertest-0.1.jar");
 
 		}
 		catch(IOException e){}		
