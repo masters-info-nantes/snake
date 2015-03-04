@@ -1,7 +1,6 @@
 package fr.univnantes.mgsframework;
 
 import java.io.IOException;
-import java.util.Collection;
 
 public class App {
 	public static void main(String[] args) {

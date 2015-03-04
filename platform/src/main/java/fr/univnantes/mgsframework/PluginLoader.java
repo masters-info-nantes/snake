@@ -218,17 +218,17 @@ public class PluginLoader {
 			while((currentFile = jarFile.getNextEntry()) != null ) {
 			    String fileName = currentFile.getName();
 			    String pluginInterfacePath = plugin.getName().split("-")[0] + "/interfaces/";
-			    
-			    if(fileName.startsWith(pluginInterfacePath)){
-			    	String className = fileName.substring(
-			    				pluginInterfacePath.length(), 
-			    				fileName.length()
-			    	);
-			    
-			    	if(!className.isEmpty() && className.endsWith(".class")){
-			    		this.mainPluginInterfaces.add(className.split("\\.")[0]);			    		
-			    	}
 
+			    if(fileName.contains(pluginInterfacePath)){
+			    	String[] classSplit = fileName.split("/interfaces/");
+    
+			    	if(classSplit.length == 2){
+			    		String className = classSplit[1];
+			    		
+			    		if(className.endsWith(".class")){
+			    			this.mainPluginInterfaces.add(className.split("\\.")[0]);
+			    		}
+			    	}
 			    }
 			}
 		} catch (IOException e) {
