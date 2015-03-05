@@ -1,6 +1,7 @@
 package fr.univnantes.mgsframework;
 
 public class Plugin {
+	
 	private String name;
 	private String category;
 	private String mainClass;
@@ -43,9 +44,9 @@ public class Plugin {
 	public String toString(){
 		StringBuilder text = new StringBuilder();
 		text.append("[" + this.name + "]\n");
-		text.append("category: " + this.category + "\n");
-		text.append("mainClass: " + this.mainClass + "\n");
 		text.append("runnable: " + (this.runnable ? "yes" : "no") + "\n");
+		text.append("mainClass: " + this.mainClass + "\n");
+		text.append("category: " + this.category + "\n");
 		text.append("description: " + this.description + "\n");
 		return text.toString();
 	}

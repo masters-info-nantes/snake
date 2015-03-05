@@ -28,23 +28,18 @@ public class PluginLoader {
 	
 	private final static String mainPluginCategory = "fr.univnantes.mgsframework.MGSApplication";
 
-	private String startPlugin; // for inspector
 	private String pluginsPath;
-	private Map<String, Plugin> runnablePlugins;
+	private Map<String, RunnablePlugin> runnablePlugins;
 	private Map<String, Plugin> classicPlugins;
-	
-	private Set<String> mainPluginInterfaces;
 	private Map<String, List<Plugin>> pluginsByCategories;
+	
 	private URLClassLoader loader;
 	
 	public PluginLoader(){
-		this.startPlugin = "";
-		this.pluginsPath = "";
-
-		this.runnablePlugins = new HashMap<String, Plugin>();
-		this.classicPlugins = new HashMap<String, Plugin>();
+		this.pluginsPath = Framework.getInstance().getPluginsPath();
 		
-		this.mainPluginInterfaces = new HashSet<String>();
+		this.runnablePlugins = new HashMap<String, RunnablePlugin>();
+		this.classicPlugins = new HashMap<String, Plugin>();
 		this.pluginsByCategories = new HashMap<String, List<Plugin>>();
 	}
 
@@ -78,7 +73,8 @@ public class PluginLoader {
 					System.out.println("* Plugin " + plugin.getName() + " loaded.");
 
 					if(plugin.isRunnable()){
-		        		this.runnablePlugins.put(currentPlugin.getName(), plugin);						
+		        		this.runnablePlugins.put(currentPlugin.getName(), (RunnablePlugin) plugin);
+		        		this.loadPluginInterfaces((RunnablePlugin) plugin);
 					}
 					else {
 						this.classicPlugins.put(currentPlugin.getName(), plugin);
@@ -161,8 +157,9 @@ public class PluginLoader {
 		
 		Plugin plugin = null;
 		
-		if(runnable && category == null){
-			plugin = new Plugin(pluginName, PluginLoader.mainPluginCategory, mainClass, runnable, description);
+		if(runnable){
+			String categoryParam = (category == null) ? PluginLoader.mainPluginCategory : category;
+			plugin = new RunnablePlugin(pluginName, categoryParam, mainClass, runnable, description);
 		}
 		else {
 			plugin = new Plugin(pluginName, category, mainClass, runnable, description);			
@@ -180,15 +177,10 @@ public class PluginLoader {
 	 */
 	protected MGSApplication loadApplication(String pluginName) throws IOException{
 		Plugin plugin = this.loadPluginConfiguration(pluginName);
-		
-		//AppContext.instance.setCurrentPlugin(plugin);
-		//AppContext.instance.setPluginsLoader(this);
 
     	MGSApplication application = (MGSApplication) this.loadPlugin(plugin);
     	application.currentPlugin = plugin;
     	application.pluginsLoader = this;
-    	
-    	this.loadApplicationInterfaces(plugin);
     	
     	return application;
 	}
@@ -197,7 +189,7 @@ public class PluginLoader {
 	 * Load interface for a given plugin which is an Application
 	 * @param plugin Runnable plugin (extends from MGSApplication)
 	 */
-	private void loadApplicationInterfaces(Plugin plugin) {
+	private void loadPluginInterfaces(RunnablePlugin plugin) {
 
 		ZipInputStream jarFile = null;
 		try {
@@ -213,7 +205,8 @@ public class PluginLoader {
 		}
 		
 		ZipEntry currentFile = null;
-
+		Set<String> interfaces = new HashSet<String>();
+	
 	    try {
 			while((currentFile = jarFile.getNextEntry()) != null ) {
 			    String fileName = currentFile.getName();
@@ -226,7 +219,7 @@ public class PluginLoader {
 			    		String className = classSplit[1];
 			    		
 			    		if(className.endsWith(".class")){
-			    			this.mainPluginInterfaces.add(className.split("\\.")[0]);
+			    			interfaces.add(className.split("\\.")[0]);
 			    		}
 			    	}
 			    }
@@ -234,6 +227,8 @@ public class PluginLoader {
 		} catch (IOException e) {
 			System.out.println("Cannot browse " + plugin.getName() + " file");
 		}
+	    
+	    plugin.setCategories(interfaces);
 	}
 
 	/**
@@ -274,26 +269,19 @@ public class PluginLoader {
 	 * @param pluginName
 	 * @return An instance of the plugin
 	 * @throws IOException Can't load the plugin and get an instance
+	 * TODO Check existance plugin
 	 */
 	public Object loadPlugin(String pluginName) throws IOException{
 		Plugin plugin = this.loadPluginConfiguration(pluginName);
 		return this.loadPlugin(plugin);
 	}
 	
-	public String getPluginsPath() {
-		return pluginsPath;
-	}
-
-	protected void setPluginsPath(String pluginsPath) {
-		this.pluginsPath = pluginsPath;
-	}
-	
 	/**
 	 * Returns runnable plugins list
 	 * @return runnable plugins list
 	 */
-	protected Set<String> getRunnablePluginsList(){
-		return this.runnablePlugins.keySet();
+	public Collection<RunnablePlugin> getRunnablePluginsList(){
+		return this.runnablePlugins.values();
 	}
 
 	/**
@@ -305,28 +293,11 @@ public class PluginLoader {
 	}
 	
 	/**
-	 * Returns categories definied by the current main plugin
-	 * @return categories definied by main plugin
-	 */
-	public Set<String> getMainPluginCategories(){
-		return this.mainPluginInterfaces;
-	}
-	
-	/**
 	 * Returns all plugins from the given category
 	 * @param category category of returned plugins
 	 * @return all plugins with the given category
 	 */
 	public List<Plugin> getClassicPluginsByCategory(String category){
 		return this.pluginsByCategories.get(category);
-	}
-	
-	// Only for platform inspector
-	public String getStartPlugin() {
-		return startPlugin;
-	}
-
-	protected void setStartPlugin(String startPlugin) {
-		this.startPlugin = startPlugin;
 	}
 }

@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -16,9 +20,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class View extends JFrame {
+import fr.univnantes.mgsframework.RunnablePlugin;
+
+public class View extends JFrame implements ListSelectionListener, ItemListener{
 	
 	private JLabel labelPluginPath;
 	private JLabel labelStartPlugin;
@@ -32,9 +40,14 @@ public class View extends JFrame {
 	private JComboBox comboPluginInterfaces;
 	private JTable tableSecondaryPlugins;
 	
+	private RunnablePlugin currentPlugin;
+	private Collection<RunnablePlugin> runnablePlugins;
+	private Model model;
+	
 	public View(){
 		
 		super("MGS platform inspector");
+		this.model = null;
 		
 		JPanel panelRoot = new JPanel();
 		panelRoot.setLayout(new BorderLayout());
@@ -60,11 +73,11 @@ public class View extends JFrame {
 		JPanel panelPlugins = new JPanel();
 		panelPlugins.setLayout(new BorderLayout());
 		panelPlugins.setBorder(BorderFactory.createTitledBorder("Main plugins"));	
-		
-		String[] choix = {" Pierre", " Paul", " Jacques", " Lou", " Marie"};
-		this.listMainPlugins = new JList(choix);
+
+		this.listMainPlugins = new JList();
 		this.listMainPlugins.setPreferredSize(new Dimension(150, 240));
 		this.listMainPlugins.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		this.listMainPlugins.addListSelectionListener(this);
 		
 		// > Panel plugins Infos
 		JPanel panelPluginDetails = new JPanel();
@@ -97,7 +110,8 @@ public class View extends JFrame {
 		panelPluginsInterfaces.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 		panelPluginsInterfaces.setMaximumSize(new Dimension(250, 40));
 		
-		this.comboPluginInterfaces = new JComboBox<String>(choix);
+		this.comboPluginInterfaces = new JComboBox<String>();
+		this.comboPluginInterfaces.addItemListener(this);
 		panelPluginsInterfaces.add(new JLabel("Interfaces: "));
 		panelPluginsInterfaces.add(this.comboPluginInterfaces);
 		
@@ -131,12 +145,16 @@ public class View extends JFrame {
 
 		this.setPreferredSize(new Dimension(600, 400));
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 	}
 	
 	public void display(){
 		this.pack();
 		this.setVisible(true);
+	}
+	
+	public void setModel(Model model){
+		this.model = model;
 	}
 	
 	public void setPluginsPath(String path){
@@ -146,4 +164,42 @@ public class View extends JFrame {
 	public void setStartPlugin(String plugin){
 		this.labelStartPlugin.setText(plugin);
 	}
+	
+	public void setMainPluginsList(Collection<RunnablePlugin> plugins){
+		this.runnablePlugins = plugins;
+		
+		Collection<String> list = new ArrayList<String>();
+		for(RunnablePlugin r: plugins){
+			list.add(r.getName());
+		}
+		
+		this.listMainPlugins.setListData(list.toArray());
+		this.listMainPlugins.setSelectedIndex(0);		
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		
+		for(RunnablePlugin r: this.runnablePlugins){
+			if(r.getName().equals(this.listMainPlugins.getSelectedValue())){
+				this.currentPlugin = r;
+			}
+		}
+		
+		this.labelPluginInfosName.setText(this.currentPlugin.getName());
+		this.labelPluginInfosMainClass.setText(this.currentPlugin.getMainClass());
+		this.labelPluginInfosDescription.setText(this.currentPlugin.getDescription());
+		
+		this.comboPluginInterfaces.removeAllItems();
+		for(String s : this.currentPlugin.getCategories()){
+			this.comboPluginInterfaces.addItem(s);
+		}
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		this.tableSecondaryPlugins.removeAll();
+//		String interfaceName = this.currentPlugin.getMainClass().r
+	}
 }
+
