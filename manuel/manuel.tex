@@ -47,17 +47,49 @@ nous avons choisi le plus possible de nous concentrer sur une architecture de
 fichier la moins contraignante possible.
 \end{abstract}
 
-\section{Organisation du framework}
-\subsection{Configuration}
+\section{Recommandations et pré-requis}
+L'ensemble du framework et des plugins sont tous gérés sous la forme de projets 
+\emph{maven} il est donc necessaire d'avoir cet outil installé pour développer 
+sur la plateforme.
+\\\\
+Notez qu'il est tout à fait possible d'utiliser le framework sous forme de d'archive 
+\emph{jar} pour l'utiliser dans un projet n'utilisant pas \emph{maven}. Le choix de 
+maven permet de faciliter l'intégration des dépendances entre la plateforme, les 
+plugins principaux et les plugins secondaires.
+\\\\
+Pour des raisons de clareté, tout les chemins indiqués dans ce manuel ont pour racine 
+le dossier du projet \emph{snake} cloné depuis GitHub.
+
+\section{Installation}
+Cette section explique comment installer la plateforme localement et y ajouter 
+les plugins développés par l'équipe pour l'exemple du snake. La plupart des commandes 
+ne seront pas expliquées ici mais l'installation des plugins est détaillée dans la 
+section suivante.
+
+\subsection{Récupérer le projet et installer la plateforme}
+Le projet est hébergé sur GitHub, pour le récupérer il suffit de le cloner avec
+la commande suivante :
+
+\begin{lstlisting}[language=bash,caption=Télécharger le projet]
+$ git clone https://github.com/masters-info-nantes/snake.git
+\end{lstlisting}
+
+Pour installer la plateforme localement, il faut utiliser la commande 
+\og{}\emph{mvn install}\fg{} dans la répertoire de la plateforme à savoir 
+\emph{/platform}.
+
+Ceci va avoir pour effet de rendre disponible la plateforme pour les plugins 
+que nous allons compiler dans l'étape suivante.
+
+\subsection{Configuration de la plateforme}
 Il existe un seul fichier de configuration qui permet d'ajuster le fonctionnement 
 du framework. Ce fichier se nomme \emph{settings.txt} et se trouve dans le 
-répertoire \emph{resources} au même niveau que les dossier \emph{src} regroupant le
-coeur du framework.
+répertoire \emph{/platform/resources}.
 
 \begin{table}[h]
 \centering
 	\begin{tabular}{lp{9cm}}
-		pluginspath & Chemin vers le dossier qui contient tout les plugins.\\
+		pluginspath & Chemin absolu vers le dossier qui contient tout les plugins.\\
 					 
 		startplugin & Nom du plugin\footnote{Il s'agit du nom du dossier du 
 		plugin} à charger au démarrage. Obligatoirement runnable.\\					 
@@ -66,10 +98,45 @@ coeur du framework.
 \end{table}
 	
 Ce répertoire contient également un dossier \emph{plugins} qui rassemble les fichiers 
-\emph{jar} des plugins. La valeur par défaut de \emph{pluginspath} est donc 
-\emph{resources/plugins}.
+\emph{jar} des plugins développés par l'équipe. La valeur par défaut de 
+\emph{pluginspath} est donc \emph{/platform/resources/plugins}.
+\\\\
+Il est necessaire de changer la valeur de \emph{pluginspath} afin qu'elle corresponde 
+à l'endroit où se trouve le dossier \emph{/platform/resources/plugins} localement.
 
-\subsection{Plugins}
+\subsection{Compiler les plugin et démarrer le jeu}
+Les plugins se trouvent dans le répertoire \emph{/plugins}. Avant de tous les compiler 
+et les importer dans la plateforme, il est necessaire d'installer les plugins 
+principaux \emph{platforminspector} et \emph{snakecore} pour pouvoir compiler leurs 
+plugins secondaires par la suite.
+
+\begin{lstlisting}[language=bash,caption=Installation des plugins principaux]
+$ cd /plugins/snakecore/
+$ mvn install
+
+$ .cd /plugins/platforminspector/
+$ mvn install
+\end{lstlisting}
+
+Nous pouvons maintenant compiler et importer dans la plateforme tout les plugins. 
+Pour cela, il suffit de lancer le script \emph{importPluginsOnPlatform} mis à 
+disposition dans le dossier \emph{/plugins}.
+
+\begin{lstlisting}[language=bash,caption=Importer les plugins]
+$ cd /plugins/
+$ ./importPluginsOnPlatform.sh
+\end{lstlisting}
+
+Tout les plugins sont maintenant importés dans la plateforme. Pour la démarrer, il 
+faut importer la plateforme dans Eclipse est lancer la classe principale \emph{App.java}
+
+\begin{lstlisting}[language=bash,caption=Démarrer la plateforme]
+$ cd /platform/
+$ mvn eclipse:eclipse
+\end{lstlisting}
+
+\section{Les plugins}
+\subsection{Introduction}
 Le dossier plugin renseigné par \emph{pluginpath} est le répertoire qui contient 
 tout les plugins que le framework pourra charger. On distingue deux types de 
 plugins:
@@ -83,11 +150,11 @@ plugins:
 	définies par un ou plusieurs plugin(s) runnable qui l'utiliseront.
 \end{description}
 
-\subsubsection{Fichier de configuration}
+\subsection{Fichier de configuration}
 Chaque plugin -- quelque soit son type -- doit respecter une certaine architecture 
 en termes d'organisation de son dossier. En effet, un plugin doit obligatoirement 
 fournir un fichier \emph{plugin.txt} qui le décrit et donne des informations sur 
-comment il peut etre utilisé.
+comment il peut être utilisé.
 
 \begin{table}[h]\label{tab:plugintxt}
 \centering
@@ -109,10 +176,9 @@ comment il peut etre utilisé.
 Le dépot git du projet\footnote{Projet hébergé par GitHub: 
 \href{github.com/masters-info-nantes/snake}
 {https://github.com/masters-info-nantes/snake}} regroupe les plugins développés 
-par l'équipe (répertoire plugins), on peut y trouver le plugin \emph{template} qui 
-donne une base pour créer un plugin.
+par l'équipe (répertoire plugins).
 
-\subsubsection{Détail sur les plugins runnable}\label{sss:DetailsRunnable}
+\subsection{Détail sur les plugins runnable}\label{sss:DetailsRunnable}
 Les plugins principaux sont capables de définir des interfaces afin de s'assurer 
 que les plugins qu'ils utiliseront répondent à leurs besoins.
 \\\\
@@ -122,111 +188,136 @@ dans un sous-package \emph{interfaces}. Ceci est moins contraignant en plus du
 fait que des utilisateurs organisées les auraient de toutes façons rassemblés 
 dans un package à part.
 
-\section{Utilisation}
-\subsection{Créer un plugin principal}
-Pour commencer, il est nécessaire de vérifier où le framework va chercher les 
-plugins en regardant le fichier \emph{settings.txt}. Dans notre exemple ce sera 
-\emph{/home/user/plugins} mais il peut se trouver à n'importe quel endroit à 
-condition d'avoir les droits de lecture et un chemin par trop exotique avec des 
-espaces et des caractères accentués.
+\subsection{Format et organisation}
+Tout plugin est fourni à la plateforme sous forme d'une archive \emph{jar}. Quelle 
+soit générée par un projet maven -- avec l'outil de création de plugins -- ou autres 
+elle doit toujours respecter une certaines organisation interne.
+
+\begin{figure}[h]
+   \centering
+   \includegraphics{ressources/plugin-organization.png}
+   \caption{Contenu d'une archive d'un plugin}
+\end{figure}
+
+Dans l'exemple ci-dessus, on remarque que le fichier de configuration 
+\emph{plugin.txt} se trouve à la racine de l'archive. La classe principale de ce 
+plugin est \emph{SnakeCore} dont le package est \emph{snakecore} ce qui se traduit 
+par le fait que la classe se trouve dans le sous-répertoire \emph{snakecore}.
 \\\\
-Créons le plugin \emph{hello} qui aura pour but de dire bonjour dans différentes 
-langues selon le plugin secondaire qui sera utilisé.
+Il s'agit d'un plugin runnable qui défini des interfaces -- \emph{Controller} et 
+\emph{Display} -- et qui doit donc obligatoirement les placer dans le sous-package 
+\emph{interfaces} se trouvant au niveau de la classe principale du plugin.
+
+\section{Créer des plugins}
+Le but de cette partie est de créer un plugin principal qui peut dire bonjour dans 
+plusieurs langues. Le plugin principal \emph{Hello} sera chargé de dire bonjour et 
+il va s'appuyer sur les plugins secondaires \emph{Francais} et \emph{Anglais} pour 
+le dire dans ces deux langues.
+
+\subsection{Générer le plugin principal}
+Pour commencer, il est nécessaire de vérifier où le framework va chercher les 
+plugins en regardant le fichier \emph{settings.txt}.
+\\\\
+L'équipe à mis à disposition le script \emph{createPlugin} dans le répertoire 
+\emph{/plugins} et nous allons l'utiliser pour générer un projet maven pour notre 
+plugin.
 
 \begin{lstlisting}[language=bash,caption=Création du plugin hello]
-$ cd plugins
-$ cp -R templates/runnable hello
+$ ./createPlugin.sh 
+This script will create a plugin skeleton for MGS framework
 
-$ cd hello/src/main/java/
-$ mv runnableplugin hello
-$ mv hello/RunnablePlugin.java Hello.java
+Your plugin name (will be folder name):
+hello
 
-$ vim Hello.java
-$ cd hello
-$ vim pom.xml
-$ vim src/main/resources/plugin.txt
-$ mvn package
-$ cp target/hello-0.1.jar /platform/plugins
+Is it a runnable plugin ? (y or n)
+y
 
-$ mvn install
+Full qualified name of your plugin class (like com.plugin.MyPlugin):
+com.hello.Hello
+
+Plugin description:
+Plugin principal qui dit bonjour
+
+Generating plugin skeleton....
+Plugin hello has been created in current directory
 \end{lstlisting}
 
-Le fichier de configuration indique que le plugin \emph{hello} est un plugin 
-runnable et que classe à lancer (qui implémente MGSApplication) est \emph{Hello}.
-
-\lstset{language=bash,caption=Hello plugin configuration}
-\lstinputlisting{ressources/plugin-hello.txt}
-
-La liaison entre le framework et le plugin principal se fait à travers la relation 
-d'héritage avec la classe MGSApplication. 
-\\\\
-En fait, nous avons fait ce choix car l'utilisation d'un singleton aurait pu 
-donner accès au framework à n'importe quel plugin (même secondaire). De plus, si 
-nous avions choisi de passer l'accès en paramètre de la fonction surchargée -- 
-\emph{run} -- ceci aurait obligé l'utilisateur à ajouter un attribut pour stocker 
-l'accès au framework.
-
-\lstset{language=java,caption=Hello plugin main class}
-\lstinputlisting{ressources/Hello.java}
-
-La dernière chose à faire est de dire au framework de démarrer notre plugin au 
-démarage. Pour cela, il faut renseigner le nom du plugin dans le paramètre 
-\emph{startplugin} du fichier de configuration du framework.
-
-\subsection{Définir des patrons de plugins}
+\subsection{Créer le patron pour les plugins secondaires}
 Comme expliqué précédemment (voir \ref{sss:DetailsRunnable}), il est possible de 
 définir des plugins secondaires qui seront utilisés par le plugin principal. 
 Tout d'abord, il faut commencer par définir le périmètre fonctionnel des 
 plugins secondaires que l'on veut à travers une interface.
+\\\\
+Pour cela il faut créer le package \emph{interfaces} au niveau de la classe 
+principale du plugin et à l'intérieur définir notre interface \emph{Speak} qui 
+permet de dire bonjour.
 
-\lstset{language=java,caption=Speak interface for Hello plugin}
+\lstset{language=java,caption=/plugins/hello/src/main/java/com/hello/interfaces/Speak.java}
 \lstinputlisting{ressources/Speak.java}
 
-La prochaine étape consiste à créer un nouveau plugin -- \emph{frenchspeak} par 
-exemple -- qui aura pour catégorie \emph{Speak}.
+\subsection{Générer les plugins secondaires}
+Nous allons de nouveau utiliser le script \emph{createPlugin} pour générer les 
+projets pour les plugins.
 
-\begin{lstlisting}[language=bash,caption=Création du plugin secondaire frenchspeak]
-$ cd plugins/hello/src/main/java/hello/intefaces
-$ mv SecondaryPlugin.java Speak.java
+\begin{lstlisting}[language=bash,caption=Création du plugin francais]
+$ ./createPlugin.sh 
+This script will create a plugin skeleton for MGS framework
 
-$ cd plugins
-$ cp templates/classic frenchspeak
-$ cd frenchspeak/src/main/java
-$ mv secondarypluginone frenchspeak
+Your plugin name (will be folder name):
+francais
 
-$ cd frenchspeak
-$ vim pom.xml
-$ vim src/main/resources/plugin.txt
+Is it a runnable plugin ? (y or n)
+n
 
-$ mvn package
-$ cp target/frenchspeak-0.1.jar /platform/plugins
+Full qualified name of plugin category (like com.plugin.interface.MyInterface):
+com.hello.interfaces.Speak
+
+Full qualified name of your plugin class (like com.plugin.MyPlugin):
+com.francais.Francais
+
+Plugin description:
+Plugin secondaire pour hello, dit bonjour en francais
+
+Generating plugin skeleton....
+Plugin francais has been created in current directory
 \end{lstlisting}
 
-Ce nouveau plugin aura pour classe principale \emph{French} qui implémentera 
-l'interface \emph{Speak} définie dans le plugin \emph{Hello} plus tôt.
-\lstset{language=bash,caption=FrenchSpeak plugin configuration}
-\lstinputlisting{ressources/plugin-frenchspeak.txt}
+Il faut maintenant définir l'action du plugin lorqu'on lui demande de dire bonjour. 
+Pour ce faire il faut compléter le code de la méthode \emph{sayHello} founie par 
+l'interface \emph{Speak}.
 
+\lstset{language=java,caption=/plugins/francais/src/main/java/com/francais/Francais.java}
+\lstinputlisting{ressources/Francais.java}
 
-\lstset{language=java,caption=FrenchSpeak plugin main class}
-\lstinputlisting{ressources/French.java}
+La création du plugin \emph{Anglais}, se fait exactement de la même manière à ceci 
+près qu'il faut attention au nom du plugin et à celui de la classe principale.
 
-\subsection{Donner les plugins au framework}
-La dernière chose à faire et donner accès au framework à nos plugins. Pour cela 
-il faut fournir le projet \emph{plugins} sour forme de \emph{jar} et le placer 
-dans le répertoire \emph{platform/ressources}.
+\subsection{Compilation et réglages du framwork}
+Nous avons à cette étape nos trois plugins \emph{hello}, \emph{francais} et 
+\emph{anglais} qui sont créés et implémentés mais il faut maintenant les compiler 
+pour ensuite les importer dans la plateforme.
+
+\begin{lstlisting}[language=bash,caption=Compilation des plugins]
+$ cd /plugins/hello
+$ mvn install
+
+$ cd /plugins/
+$ ./importPluginsOnPlatform.sh
+\end{lstlisting}
+
+Avant d'importer les plugins il est necessaire d'installer le plugin principal 
+afin de pouvoir satisfaire la dépendance des plugins secondaire par rapport 
+à ce dernier.
 \\\\
-Tout les plugins étant rassemblés dans le projet maven \emph{plugins}, voici 
-la marche à suivre pour mettre à jour les mettre à jour.
+Un fois l'importation terminée, tout les plugins seront présents -- sous la forme 
+d'archives \emph{jar} -- dans le répertoire \emph{/platform/resources/plugins/}.
 
-\begin{lstlisting}[language=bash,caption=Mise à jour des plugins]
-$ cd plugins
-$ mvn compile
-$ mvn package
-$ cp target/snake-0.1.jar ../platform/ressources
-\end{lstlisting}
+La dernière chose à faire est de dire au framework de démarrer notre plugin 
+\emph{hello} au démarage. Pour cela, il faut renseigner le nom du plugin 
+-- nom du fichier .jar -- dans le paramètre \emph{startplugin} du fichier de 
+configuration du framework.
 
-\subsection{Appels au framework}
+\section{Appels au framework}
 Etant donné qu'un plugin principal peut utiliser des plugins secondaires gérés 
 par le framework, il est possible d'instancier des plugins secondaires à 
 partir d'un plugin principal.
@@ -299,5 +390,13 @@ fichier de configuration.
 
 % todo: use script
 % install framework
+La liaison entre le framework et le plugin principal se fait à travers la relation 
+d'héritage avec la classe MGSApplication. 
+\\\\
+En fait, nous avons fait ce choix car l'utilisation d'un singleton aurait pu 
+donner accès au framework à n'importe quel plugin (même secondaire). De plus, si 
+nous avions choisi de passer l'accès en paramètre de la fonction surchargée -- 
+\emph{run} -- ceci aurait obligé l'utilisateur à ajouter un attribut pour stocker 
+l'accès au framework.
 
 \end{document}

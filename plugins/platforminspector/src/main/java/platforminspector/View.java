@@ -23,7 +23,10 @@ import javax.swing.SpringLayout;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
+import fr.univnantes.mgsframework.Plugin;
 import fr.univnantes.mgsframework.RunnablePlugin;
 
 public class View extends JFrame implements ListSelectionListener, ItemListener{
@@ -43,6 +46,8 @@ public class View extends JFrame implements ListSelectionListener, ItemListener{
 	private RunnablePlugin currentPlugin;
 	private Collection<RunnablePlugin> runnablePlugins;
 	private Model model;
+	
+	private static int TABLE_LINE_MAX = 7;
 	
 	public View(){
 		
@@ -115,15 +120,12 @@ public class View extends JFrame implements ListSelectionListener, ItemListener{
 		panelPluginsInterfaces.add(new JLabel("Interfaces: "));
 		panelPluginsInterfaces.add(this.comboPluginInterfaces);
 		
-		// > Panel plugins table
-		String[] columnNames = { "Name", "mainClass", "Description" };
-
-		Object[][] data = {
-				{"toto-0.1.jar", "com.toto.Toto", "Description" }
-		};		
-		
-		this.tableSecondaryPlugins = new JTable(data, columnNames);		
+		// > Panel plugins table		
+		this.tableSecondaryPlugins = new JTable(View.TABLE_LINE_MAX, 3);
 		this.tableSecondaryPlugins.setEnabled(false);
+		this.tableSecondaryPlugins.getColumnModel().getColumn(0).setHeaderValue("Nom");
+		this.tableSecondaryPlugins.getColumnModel().getColumn(1).setHeaderValue("Main class");
+		this.tableSecondaryPlugins.getColumnModel().getColumn(2).setHeaderValue("Description");
 		
 		panelPluginInterfacesAndSecondary.add(panelPluginsInterfaces);
 		panelPluginInterfacesAndSecondary.add(new JScrollPane(this.tableSecondaryPlugins));
@@ -192,14 +194,43 @@ public class View extends JFrame implements ListSelectionListener, ItemListener{
 		
 		this.comboPluginInterfaces.removeAllItems();
 		for(String s : this.currentPlugin.getCategories()){
-			this.comboPluginInterfaces.addItem(s);
+			String[] splits = s.split("\\.");
+			this.comboPluginInterfaces.addItem(splits[splits.length-1]);
+		}
+	
+		if(!this.currentPlugin.getCategories().isEmpty()){
+			this.comboPluginInterfaces.setSelectedIndex(0);	
 		}
 	}
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		this.tableSecondaryPlugins.removeAll();
-//		String interfaceName = this.currentPlugin.getMainClass().r
+		
+		JComboBox combo = (JComboBox) e.getSource();
+		TableModel tableModel = this.tableSecondaryPlugins.getModel();
+		for(int i = 0; i < View.TABLE_LINE_MAX; i++){
+			tableModel.setValueAt("" , i, 0);
+			tableModel.setValueAt("" , i, 1);
+			tableModel.setValueAt("" , i, 2);			
+		}		
+		this.tableSecondaryPlugins.setModel(tableModel);
+		
+		if(combo.getSelectedIndex() < 0) return;
+
+		String category = (String) this.currentPlugin.getCategories().toArray()[combo.getSelectedIndex()];
+		Collection<Plugin> plugins = this.model.getPluginsByCategory(category);
+		if(plugins == null) return;
+		
+		tableModel = this.tableSecondaryPlugins.getModel();
+		for(int i = 0; i < plugins.size(); i++){
+			Plugin p = (Plugin) plugins.toArray()[i];
+			
+			tableModel.setValueAt(p.getName() , i, 0);
+			tableModel.setValueAt(p.getMainClass() , i, 1);
+			tableModel.setValueAt(p.getDescription() , i, 2);			
+		}
+		
+		this.tableSecondaryPlugins.setModel(tableModel);
 	}
 }
 

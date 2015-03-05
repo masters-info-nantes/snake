@@ -176,7 +176,14 @@ public class PluginLoader {
 	 * @throws IOException report to the exception message
 	 */
 	protected MGSApplication loadApplication(String pluginName) throws IOException{
-		Plugin plugin = this.loadPluginConfiguration(pluginName);
+		Plugin plugin = null;
+		
+		try {
+			plugin = this.loadPluginConfiguration(pluginName);
+		}
+		catch(IOException e){
+			throw new IOException("Plugin " + pluginName + " does not exists");
+		}
 
     	MGSApplication application = (MGSApplication) this.loadPlugin(plugin);
     	application.currentPlugin = plugin;
@@ -206,20 +213,20 @@ public class PluginLoader {
 		
 		ZipEntry currentFile = null;
 		Set<String> interfaces = new HashSet<String>();
-	
+		String interfacesPackage = plugin.getMainClass().replaceFirst("\\..*$", "") + ".interfaces.";
+		
 	    try {
 			while((currentFile = jarFile.getNextEntry()) != null ) {
-			    String fileName = currentFile.getName();
-			    String pluginInterfacePath = plugin.getName().split("-")[0] + "/interfaces/";
+			    String fileName = currentFile.getName().replaceAll("/", ".");
 
-			    if(fileName.contains(pluginInterfacePath)){
-			    	String[] classSplit = fileName.split("/interfaces/");
+			    if(fileName.startsWith(interfacesPackage)){
+			    	String[] classSplit = fileName.split(".interfaces.");
     
 			    	if(classSplit.length == 2){
 			    		String className = classSplit[1];
 			    		
 			    		if(className.endsWith(".class")){
-			    			interfaces.add(className.split("\\.")[0]);
+			    			interfaces.add(fileName.replaceFirst("\\.class$", ""));
 			    		}
 			    	}
 			    }
@@ -272,7 +279,15 @@ public class PluginLoader {
 	 * TODO Check existance plugin
 	 */
 	public Object loadPlugin(String pluginName) throws IOException{
-		Plugin plugin = this.loadPluginConfiguration(pluginName);
+		Plugin plugin = null; 
+		
+		try {
+			plugin = this.loadPluginConfiguration(pluginName);
+		}
+		catch(IOException e){
+			throw new IOException("Plugin " + pluginName + " does not exists");
+		}
+		
 		return this.loadPlugin(plugin);
 	}
 	

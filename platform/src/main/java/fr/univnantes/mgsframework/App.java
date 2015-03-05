@@ -18,7 +18,7 @@ public class App {
 		}			
 		
 		System.out.println("\nRun " + framework.getStartPluginName() + " as main plugin\n----------------\n");
-		//framework.setStartPlugin("platforminspector-0.1.jar");
+		framework.setStartPlugin("platforminspector-0.1.jar");
 		try {
 			framework.runStartPlugin();
 		} 
