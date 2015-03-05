@@ -38,6 +38,12 @@ To import the projet in eclipse use:
 $ mvn eclipse:eclipse
 ```
 
+After a pull, think about import plugins into the platform.
+
+```
+$ cd plugins
+$ ./importPluginsOnPlatform.sh
+```
 ## Authors
 * Antoine Forgerou
 * David Brevet

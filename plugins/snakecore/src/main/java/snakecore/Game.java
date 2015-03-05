@@ -38,6 +38,7 @@ public class Game {
 		this.display = (Display)this.pluginLoader.loadPlugin("displayGUI-0.1.jar");
 		this.gameOver = (GameOver)this.pluginLoader.loadPlugin("gameovertest-0.1.jar");
 		this.controller = (Controller)this.pluginLoader.loadPlugin("controllerArrow-0.1.jar");
+
 		}
 		catch(IOException e){}		
 		

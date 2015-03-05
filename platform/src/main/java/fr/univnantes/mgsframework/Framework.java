@@ -33,7 +33,8 @@ public class Framework {
 			configReader.load(configFile);
 			
 			this.pluginLoader.setPluginsPath(configReader.getProperty("pluginspath"));
-			this.startPluginName = configReader.getProperty("startplugin");			
+			this.startPluginName = configReader.getProperty("startplugin");	
+			this.pluginLoader.setStartPlugin(this.startPluginName); // for inspector
 		}
 		catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -61,5 +62,14 @@ public class Framework {
 	
 	public String getStartPluginName(){
 		return this.startPluginName;
+	}
+	
+	/**
+	 * Change the start plugin given in platform configuration
+	 * @warning Use at your own risks, this override the configuration
+	 * @param pluginName
+	 */
+	public void setStartPlugin(String pluginName){
+		this.startPluginName = pluginName;
 	}
 }
