@@ -6,5 +6,6 @@ public interface Display
 	
 	public void show();
 	public void setMap(Map map);
+	public void setController(Controller controller);
 	public void updateMap();
 }

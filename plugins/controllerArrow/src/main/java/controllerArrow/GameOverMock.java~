@@ -1,13 +1,21 @@
-package gameovertest;
+package snakecore.mocks;
 
 import snakecore.interfaces.GameOver;
 import snakecore.interfaces.MapElement;
 
-public class GameOverTest implements GameOver {
+/*
+ * WARNING:
+ * 
+ * This class is a mock (for test purpose), don't use it 
+ * for complex operations. 
+ * Create a real plugin and use it instead.
+ * 
+ */
+public class GameOverMock implements GameOver {
 
 	private boolean ended;
 	
-	public GameOverTest(){
+	public GameOverMock(){
 		this.ended = false;
 	}
 	
@@ -23,7 +31,7 @@ public class GameOverTest implements GameOver {
 		 * CAUTION: if ended is allready set to true, don't 
 		 * set it to false with another method...
 		 */
-		this.ended |= turn > 5000; // As a result: or operator
+		this.ended |= turn > 10; // As a result: or operator
 	}
 
 	@Override

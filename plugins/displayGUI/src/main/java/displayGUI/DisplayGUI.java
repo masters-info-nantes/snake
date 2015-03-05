@@ -3,6 +3,7 @@ package displayGUI;
 import snakecore.interfaces.Display;
 import snakecore.interfaces.Map;
 import snakecore.interfaces.MapElement;
+import snakecore.interfaces.Controller;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -11,10 +12,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class DisplayGUI implements Display {
 
 	private Map map;
+	private Controller controller;
 	private JPanel content;
 	private JFrame frame;
 	private static int pixelByCase = 15;
@@ -35,6 +39,15 @@ public class DisplayGUI implements Display {
 				affichage(g);
             	}
             };
+            content.addKeyListener(new KeyAdapter() {
+				@Override
+		      	public void keyPressed(KeyEvent e) {
+		      		System.out.println(e);
+            		controller.updateEvent(e);
+      			}
+			});
+			frame.setFocusable(false);
+			content.setFocusable(true);
 
     }
 	
@@ -50,6 +63,12 @@ public class DisplayGUI implements Display {
         /*centrage sur l'écran*/
         frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+	}
+
+	@Override
+	public void setController(Controller controller)
+	{
+		this.controller = controller;
 	}
 
 	@Override
