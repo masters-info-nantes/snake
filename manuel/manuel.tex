@@ -322,48 +322,57 @@ Etant donné qu'un plugin principal peut utiliser des plugins secondaires géré
 par le framework, il est possible d'instancier des plugins secondaires à 
 partir d'un plugin principal.
 \\\\
-La classe \emph{Hello} du plugin \emph{hello} doit implémenter la méthode 
-\emph{run} qui prend en paramètre un objet de type \emph{AppContext} et c'est 
-ce lien qui va permettre de faire des appels au framework. 
-Cette classe possède deux attributs accessibles par le plugin (via des getters):
+La classe \emph{Hello} du plugin \emph{hello} hériter de la classe 
+\emph{MGSApplication} et c'est ce lien qui va permettre de faire des appels au 
+framework. 
+\\\\
+En fait, nous avons fait ce choix car l'utilisation d'un singleton aurait pu 
+donner accès au framework à n'importe quel plugin (même secondaire). De plus, si 
+nous avions choisi de passer l'accès en paramètre de la fonction surchargée -- 
+\emph{run} -- ceci aurait obligé l'utilisateur à ajouter un attribut pour stocker 
+l'accès au framework.
+\\\\
+Cette classe possède deux attributs directement accessibles par le plugin :
 \emph{currentPlugin} et \emph{pluginLoader}. Le premier regroupe tout simplement 
 la configuration du plugin courant -- hello -- mais le second donne accès au 
 gestionnaire de plugins.
 
 \begin{table}[h]
 	\begin{tabular}{|l|}
+
 		\hline
-		\texttt{String getPluginsPath()}\\
+		\texttt{Collection<RunnablePlugin> getRunnablePluginsList()}\\
 		\hline
-		Chemin vers le dossier où se trouvent les plugins\\
-		\hline			
+		Tout les plugins principaux (runnable)\\
+		\hline
 
 		\hline
 		\texttt{Collection<Plugin> getClassicPlugins()}\\
 		\hline
-		Configuration de tout les plugins chargés par le framework (exepté les\\ 
+		Tout les plugins secondaires chargés par le framework (exepté les \\
 		plugins	principaux).\\
 		\hline
-	
+			
 		\hline
 		\texttt{List<Plugin> getClassicPluginsByCategory(String category)}\\
 		\hline
 		Tout les plugins secondaires ayant la catégorie donnée\\
-		\hline
-
-		\hline
-		\texttt{Set<String> getClassicPluginsList()}\\
-		\hline
-		Nom de tout les plugins chargés par le framework (exepté les \\
-		plugins	principaux).\\
-		\hline
+		\hline			
 			
 		\hline
 		\texttt{Object loadPlugin(Plugin plugin) throws IOException}\\
 		\hline
 		Charge le plugin donné en paramètre. Cette fonction assure que le plugin\\
-		donné est bien une sous-classe de sa catégorie.\\
+		retourné est bien une sous-classe de sa catégorie.\\
 		\hline
+		
+		\hline
+		\texttt{Object loadPlugin(String pluginName) throws IOException}\\
+		\hline
+		Cette méthode réutilise la précédente mais permet de ne charger un plugin
+		à partir du nom de son archive jar. Lance une exception si le plugin demandé
+		n'existe pas\\
+		\hline		
 	\end{tabular}	
 \caption{Méthodes du gestionnaire de plugins}
 \end{table}
@@ -387,16 +396,5 @@ Ensuite, il va scanner les jars, lire le fichier de configuration
 Une fois cette étape de chargement de la liste des plugins, le framework va 
 démarrer le plugin par défaut qui a été indiqué avec \emph{startplugin} dans son 
 fichier de configuration.
-
-% todo: use script
-% install framework
-La liaison entre le framework et le plugin principal se fait à travers la relation 
-d'héritage avec la classe MGSApplication. 
-\\\\
-En fait, nous avons fait ce choix car l'utilisation d'un singleton aurait pu 
-donner accès au framework à n'importe quel plugin (même secondaire). De plus, si 
-nous avions choisi de passer l'accès en paramètre de la fonction surchargée -- 
-\emph{run} -- ceci aurait obligé l'utilisateur à ajouter un attribut pour stocker 
-l'accès au framework.
 
 \end{document}

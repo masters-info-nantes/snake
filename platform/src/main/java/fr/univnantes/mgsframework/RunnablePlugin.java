@@ -7,7 +7,8 @@ public class RunnablePlugin extends Plugin {
 
 	private Set<String> categories;
 	
-	public RunnablePlugin(String name, String category, String mainClass,
+	// Plugins will not be able to instance a new Plugin  	
+	protected RunnablePlugin(String name, String category, String mainClass,
 			boolean runnable, String description) 
 	{
 		super(name, category, mainClass, runnable, description);

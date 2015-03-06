@@ -8,7 +8,8 @@ public class Plugin {
 	private boolean runnable;
 	private String description;
 	
-	public Plugin(String name, String category, String mainClass, boolean runnable, String description){
+	// Plugins will not be able to instance a new Plugin
+	protected Plugin(String name, String category, String mainClass, boolean runnable, String description){
 		this.name = name;
 		this.category = category;
 		this.mainClass = mainClass;
