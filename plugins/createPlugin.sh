@@ -104,7 +104,7 @@ public class $1 extends MGSApplication {
 		
 		// List all categories provided by this plugin
 		System.out.println("List of categories:");
-		Set<String> categories = this.pluginsLoader.getMainPluginCategories();
+		Set<String> categories = this.currentPlugin.getCategories();
 		for (String string : categories) {
 			System.out.println(string);
 		}		

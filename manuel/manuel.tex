@@ -49,11 +49,11 @@ fichier la moins contraignante possible.
 
 \section{Recommandations et pré-requis}
 L'ensemble du framework et des plugins sont tous gérés sous la forme de projets 
-\emph{maven} il est donc necessaire d'avoir cet outil installé pour développer 
+\emph{maven}. Il est donc necessaire d'avoir cet outil installé pour développer 
 sur la plateforme.
 \\\\
 Notez qu'il est tout à fait possible d'utiliser le framework sous forme de d'archive 
-\emph{jar} pour l'utiliser dans un projet n'utilisant pas \emph{maven}. Le choix de 
+\emph{jar} pour l'inclure dans un projet n'utilisant pas \emph{maven}. Le choix de 
 maven permet de faciliter l'intégration des dépendances entre la plateforme, les 
 plugins principaux et les plugins secondaires.
 \\\\
@@ -92,7 +92,10 @@ répertoire \emph{/platform/resources}.
 		pluginspath & Chemin absolu vers le dossier qui contient tout les plugins.\\
 					 
 		startplugin & Nom du plugin\footnote{Il s'agit du nom du dossier du 
-		plugin} à charger au démarrage. Obligatoirement runnable.\\					 
+		plugin} à charger au démarrage. Obligatoirement runnable.\\	
+		
+		debug & Lance l'inspecteur de la plateforme qui liste les plugins si la valeur 
+		est égale à \emph{true}				 
 	\end{tabular}	
 \caption{Paramètres du fichier settings.txt}
 \end{table}
@@ -104,11 +107,11 @@ Ce répertoire contient également un dossier \emph{plugins} qui rassemble les f
 Il est necessaire de changer la valeur de \emph{pluginspath} afin qu'elle corresponde 
 à l'endroit où se trouve le dossier \emph{/platform/resources/plugins} localement.
 
-\subsection{Compiler les plugin et démarrer le jeu}
+\subsection{Compiler les plugins et démarrer le jeu}
 Les plugins se trouvent dans le répertoire \emph{/plugins}. Avant de tous les compiler 
 et les importer dans la plateforme, il est necessaire d'installer les plugins 
-principaux \emph{platforminspector} et \emph{snakecore} pour pouvoir compiler leurs 
-plugins secondaires par la suite.
+principaux \emph{platforminspector} et \emph{snakecore} afin de pouvoir compiler 
+leurs plugins secondaires par la suite.
 
 \begin{lstlisting}[language=bash,caption=Installation des plugins principaux]
 $ cd /plugins/snakecore/
@@ -142,11 +145,11 @@ tout les plugins que le framework pourra charger. On distingue deux types de
 plugins:
 
 \begin{description}
-	\item[Runnable] Plugin principal qui peut etre démarré par le framework s'il 
+	\item[Runnable/Principal] Plugin principal qui peut etre démarré par le framework s'il 
 	est renseigné comme \emph{startplugin} dans le fichier de configuration du 
 	framework.
 	
-	\item[Classic] Plugin annexe qui fourni des classes respectant les interfaces 
+	\item[Classic/Secondaire] Plugin annexe qui fourni des classes respectant les interfaces 
 	définies par un ou plusieurs plugin(s) runnable qui l'utiliseront.
 \end{description}
 
@@ -156,11 +159,11 @@ en termes d'organisation de son dossier. En effet, un plugin doit obligatoiremen
 fournir un fichier \emph{plugin.txt} qui le décrit et donne des informations sur 
 comment il peut être utilisé.
 
-\begin{table}[h]\label{tab:plugintxt}
+\begin{table}[!h]\label{tab:plugintxt}
 \centering
 	\begin{tabular}{lp{10cm}}
 		runnable & Indique si le plugin est un plugin runnable ou classic. 
-		Peut être égal à \emph{0/1} ou \emph{true/false}.\\				
+		Peut être égal à \emph{true} ou \emph{false}.\\				
 		
 		category & Classe ou interface que respecte le plugin. Pour un plugin 
 		runnable ce sera toujours \emph{fr.univnantes.snake.framwork.MGSApplication} 
@@ -191,7 +194,7 @@ dans un package à part.
 \subsection{Format et organisation}
 Tout plugin est fourni à la plateforme sous forme d'une archive \emph{jar}. Quelle 
 soit générée par un projet maven -- avec l'outil de création de plugins -- ou autres 
-elle doit toujours respecter une certaines organisation interne.
+elle doit toujours respecter une certaine organisation interne.
 
 \begin{figure}[h]
    \centering
@@ -369,8 +372,8 @@ gestionnaire de plugins.
 		\hline
 		\texttt{Object loadPlugin(String pluginName) throws IOException}\\
 		\hline
-		Cette méthode réutilise la précédente mais permet de ne charger un plugin
-		à partir du nom de son archive jar. Lance une exception si le plugin demandé
+		Cette méthode réutilise la précédente mais permet de ne charger un plugin\\
+		à partir du nom de son archive jar. Lance une exception si le plugin demandé\\
 		n'existe pas\\
 		\hline		
 	\end{tabular}	
@@ -378,7 +381,7 @@ gestionnaire de plugins.
 \end{table}
 
 \section{Fonctionnement interne}
-Lors d'une première phase, le framework va lire son fichier de configuration -- 
+Lors d'une première phase, le framework va lire le fichier de configuration -- 
 \emph{settings.txt} -- pour trouver le chemin vers le dossier des plugins. 
 Ensuite, il va scanner les jars, lire le fichier de configuration 
 \emph{plugins.txt} et stocker la liste des plugins dont la configuration est valide.
@@ -395,6 +398,7 @@ Ensuite, il va scanner les jars, lire le fichier de configuration
 
 Une fois cette étape de chargement de la liste des plugins, le framework va 
 démarrer le plugin par défaut qui a été indiqué avec \emph{startplugin} dans son 
-fichier de configuration.
-
+fichier de configuration. Tout de fois, si le fichier de configuration du 
+framework indique l'utilisation du mode debug ce sera l'inspecteur de plateforme 
+qui sera lancé.
 \end{document}

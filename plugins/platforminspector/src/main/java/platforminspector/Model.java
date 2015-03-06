@@ -1,8 +1,10 @@
 package platforminspector;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import fr.univnantes.mgsframework.Framework;
+import fr.univnantes.mgsframework.MGSApplication;
 import fr.univnantes.mgsframework.Plugin;
 import fr.univnantes.mgsframework.PluginLoader;
 import fr.univnantes.mgsframework.RunnablePlugin;
@@ -28,5 +30,10 @@ public class Model {
 	
 	public Collection<Plugin> getPluginsByCategory(String category){
 		return this.pluginLoader.getClassicPluginsByCategory(category);
+	}
+	
+	public void runMainPlugin(RunnablePlugin plugin) throws IOException {
+		MGSApplication app = this.pluginLoader.loadApplication(plugin.getName());
+		app.run();
 	}
 }

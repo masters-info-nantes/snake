@@ -79,11 +79,6 @@ public class Game {
 		
 		System.out.println("> Next turn: " + turn);
 		
-		/*if(turn == 5){
-			this.snake.setDirection(Direction.BOTTOM);
-		}*/
-		//this.snake.evolve();
-		
 		this.display.updateMap();	
 		System.out.println("\n");
 		

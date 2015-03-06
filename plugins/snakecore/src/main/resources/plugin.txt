@@ -1,2 +1,2 @@
-runnable=1
+runnable=true
 mainClass=snakecore.SnakeCore

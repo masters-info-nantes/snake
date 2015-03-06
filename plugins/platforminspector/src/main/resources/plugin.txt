@@ -1,5 +1,5 @@
 # This plugin is a main plugin ?
-runnable=1
+runnable=true
 
 # Plugin main class 
 mainClass=platforminspector.PlatformInspector

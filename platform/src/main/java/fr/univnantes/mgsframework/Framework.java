@@ -9,6 +9,8 @@ import java.util.Set;
 public class Framework {
 	
 	private static String configFilePath = "resources/settings.txt";
+	private static String inspectorPluginName = "platforminspector-0.1.jar";
+	
 	private static Framework framework = null;
 	
 	public  PluginLoader pluginLoader;
@@ -49,7 +51,12 @@ public class Framework {
 			
 			this.startPluginName = configReader.getProperty("startplugin");
 			this.modifiedStartPluginName = this.startPluginName;
-			this.pluginsPath = configReader.getProperty("pluginspath");			
+			this.pluginsPath = configReader.getProperty("pluginspath");	
+			
+			String debugParam = configReader.getProperty("debug");
+			if(debugParam != null && "true".equals(debugParam)){
+				this.modifiedStartPluginName = Framework.inspectorPluginName;
+			}
 		}
 		catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -81,13 +88,5 @@ public class Framework {
 	
 	public String getPluginsPath(){
 		return this.pluginsPath;
-	}
-	/**
-	 * Change the start plugin given in platform configuration
-	 * @warning Use at your own risks, this override the configuration
-	 * @param pluginName
-	 */
-	public void setStartPlugin(String pluginName){
-		this.modifiedStartPluginName = pluginName;
 	}
 }

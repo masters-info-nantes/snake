@@ -149,7 +149,7 @@ public class PluginLoader {
 			   mainClass = configReader.getProperty("mainClass"),
 			   description = configReader.getProperty("description");
 		
-		boolean runnable = "1".equals(runnableString) ? true : Boolean.parseBoolean(runnableString);
+		boolean runnable = Boolean.parseBoolean(runnableString);
 		
 		if(!runnable && category == null){
 			throw new IOException("Unable to load " + pluginName + " plugin. Please provide category for non runnable plugin in plugin.txt.");		
@@ -175,7 +175,7 @@ public class PluginLoader {
 	 * @return instance of plugin main class
 	 * @throws IOException report to the exception message
 	 */
-	protected MGSApplication loadApplication(String pluginName) throws IOException{
+	public MGSApplication loadApplication(String pluginName) throws IOException{
 		Plugin plugin = null;
 		
 		try {
@@ -186,7 +186,7 @@ public class PluginLoader {
 		}
 
     	MGSApplication application = (MGSApplication) this.loadPlugin(plugin);
-    	application.currentPlugin = plugin;
+    	application.currentPlugin = (RunnablePlugin) plugin;
     	application.pluginsLoader = this;
     	
     	return application;
@@ -213,10 +213,10 @@ public class PluginLoader {
 		
 		ZipEntry currentFile = null;
 		Set<String> interfaces = new HashSet<String>();
-		String interfacesPackage = plugin.getMainClass().replaceFirst("\\..*$", "") + ".interfaces.";
-		
+		String interfacesPackage = plugin.getMainClass().replaceFirst("\\.[^\\.]*$", "") + ".interfaces.";
+
 	    try {
-			while((currentFile = jarFile.getNextEntry()) != null ) {
+			while((currentFile = jarFile.getNextEntry()) != null ) {				
 			    String fileName = currentFile.getName().replaceAll("/", ".");
 
 			    if(fileName.startsWith(interfacesPackage)){
