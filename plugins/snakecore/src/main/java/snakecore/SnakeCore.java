@@ -24,7 +24,7 @@ public class SnakeCore extends MGSApplication{
 
 	public void frameworkUsageExample(){
 		System.out.println("\n" + this.currentPlugin);
-		
+		/*
 		System.out.println("List of categories:");
 		Set<String> categories = this.pluginsLoader.getMainPluginCategories();
 		for (String string : categories) {
@@ -47,6 +47,7 @@ public class SnakeCore extends MGSApplication{
 			}
 			
 			System.out.println();
-		}				
+			
+		}	*/			
 	}
 }

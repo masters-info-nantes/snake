@@ -6,11 +6,8 @@ public class PlatformInspector extends MGSApplication {
 	
 	@Override
 	public void run() {
-		View view = new View();
-		
-		view.setPluginsPath(this.pluginsLoader.getPluginsPath());
-		view.setStartPlugin(this.pluginsLoader.getStartPlugin());
-		
+		Model model = new Model(this.pluginsLoader);
+		View view = new View(model);
 		view.display();
 	}
 }

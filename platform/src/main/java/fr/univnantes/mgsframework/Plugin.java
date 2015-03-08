@@ -1,13 +1,15 @@
 package fr.univnantes.mgsframework;
 
 public class Plugin {
+	
 	private String name;
 	private String category;
 	private String mainClass;
 	private boolean runnable;
 	private String description;
 	
-	public Plugin(String name, String category, String mainClass, boolean runnable, String description){
+	// Plugins will not be able to instance a new Plugin
+	protected Plugin(String name, String category, String mainClass, boolean runnable, String description){
 		this.name = name;
 		this.category = category;
 		this.mainClass = mainClass;
@@ -43,9 +45,9 @@ public class Plugin {
 	public String toString(){
 		StringBuilder text = new StringBuilder();
 		text.append("[" + this.name + "]\n");
-		text.append("category: " + this.category + "\n");
-		text.append("mainClass: " + this.mainClass + "\n");
 		text.append("runnable: " + (this.runnable ? "yes" : "no") + "\n");
+		text.append("mainClass: " + this.mainClass + "\n");
+		text.append("category: " + this.category + "\n");
 		text.append("description: " + this.description + "\n");
 		return text.toString();
 	}

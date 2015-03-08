@@ -9,16 +9,33 @@ import java.util.Set;
 public class Framework {
 	
 	private static String configFilePath = "resources/settings.txt";
+	private static String inspectorPluginName = "platforminspector-0.1.jar";
+	
+	private static Framework framework = null;
+	
 	public  PluginLoader pluginLoader;
-	
 	private String startPluginName;
+	private String modifiedStartPluginName;
+	private String pluginsPath;
 	
-	public Framework() throws IOException{
-		this.pluginLoader = new PluginLoader();
-		this.startPluginName = "";
+	public static Framework getInstance(){
+		if(Framework.framework == null){
+			Framework.framework = new Framework();
+		}
 		
+		return Framework.framework;
+	}
+	
+	public Framework() {
+		this.startPluginName = "";
+		this.modifiedStartPluginName = "";
+		this.pluginsPath = "";
+	}
+	
+	public void init() throws IOException {
 		this.loadConfiguration();
-		this.pluginLoader.loadPluginsList();
+		this.pluginLoader = new PluginLoader();
+		this.pluginLoader.loadPluginsList();		
 	}
 	
 	/**
@@ -32,9 +49,14 @@ public class Framework {
 			Properties configReader = new Properties();
 			configReader.load(configFile);
 			
-			this.pluginLoader.setPluginsPath(configReader.getProperty("pluginspath"));
-			this.startPluginName = configReader.getProperty("startplugin");	
-			this.pluginLoader.setStartPlugin(this.startPluginName); // for inspector
+			this.startPluginName = configReader.getProperty("startplugin");
+			this.modifiedStartPluginName = this.startPluginName;
+			this.pluginsPath = configReader.getProperty("pluginspath");	
+			
+			String debugParam = configReader.getProperty("debug");
+			if(debugParam != null && "true".equals(debugParam)){
+				this.modifiedStartPluginName = Framework.inspectorPluginName;
+			}
 		}
 		catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -46,7 +68,7 @@ public class Framework {
 		}
 		
 		System.out.println("Framework configuration");
-		System.out.println("* plugins path:  " + this.pluginLoader.getPluginsPath());
+		System.out.println("* plugins path:  " + this.pluginsPath);
 		System.out.println("* start plugin: " + this.startPluginName + "\n");
 	}
 	
@@ -56,7 +78,7 @@ public class Framework {
 	 * @throws IOException
 	 */
 	public void runStartPlugin() throws IOException{
-		MGSApplication startPlugin = this.pluginLoader.loadApplication(this.startPluginName);
+		MGSApplication startPlugin = this.pluginLoader.loadApplication(this.modifiedStartPluginName);
 		startPlugin.run();
 	}
 	
@@ -64,12 +86,7 @@ public class Framework {
 		return this.startPluginName;
 	}
 	
-	/**
-	 * Change the start plugin given in platform configuration
-	 * @warning Use at your own risks, this override the configuration
-	 * @param pluginName
-	 */
-	public void setStartPlugin(String pluginName){
-		this.startPluginName = pluginName;
+	public String getPluginsPath(){
+		return this.pluginsPath;
 	}
 }
