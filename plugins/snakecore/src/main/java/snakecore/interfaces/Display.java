@@ -8,4 +8,6 @@ public interface Display
 	public void setMap(Map map);
 	public void setController(Controller controller);
 	public void updateMap();
+	public void setGameOver(boolean gameOver);
+		
 }

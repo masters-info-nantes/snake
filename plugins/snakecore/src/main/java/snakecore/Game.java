@@ -28,6 +28,8 @@ public class Game {
 		this.snake = new Snake(15,15);
 		snake.evolve();
 		snake.evolve();
+		snake.evolve();
+		snake.evolve();
 		this.turn = 1;
 	}
 
@@ -49,7 +51,7 @@ public class Game {
 
 	public void start(){
 		this.display.show();
-		
+
 		while(!this.gameOver.isGameOver()){ 
 			this.nextTurn();
 			
@@ -64,13 +66,15 @@ public class Game {
 	}
 
 	public void nextTurn(){
-		this.snake.setDirection(controller.getLastDirection());		
+		this.snake.setDirection(controller.getLastDirection());	
+
 		this.snake.move();
 
 		try {
 			this.map.moveElement(this.snake, this.snake.getX(), this.snake.getY());
 		} 
 		catch (OutOfMapException e) {
+			this.display.setGameOver(true);
 			this.gameOver.onSnakeOutOfMap();
 		} 
 		catch (CollisionException e) {
