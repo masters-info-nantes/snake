@@ -29,10 +29,22 @@ public class MapGUI implements Map {
 	public void moveElement(MapElement element, int x, int y) 
 			throws OutOfMapException, CollisionException
 	{
-		if((x > getWidth()) || (x < 0) || (y > getHeight()) || (y < 0))
+		if((x >= getWidth()) || (x < 0) || (y >= getHeight()) || (y < 0))
 		{
 			throw new OutOfMapException();
 		}	
+		boolean head = false;
+		for (MapElement subelt : element.getSubElements()) {
+			if( (x==subelt.getX())&&(y==subelt.getY()) )
+			{
+				if(head == true){
+					throw new CollisionException(element,subelt);
+				}
+				else{
+					head = true;
+				}
+			}
+		}
 	}
 
 	@Override

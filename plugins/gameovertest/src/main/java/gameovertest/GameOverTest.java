@@ -29,6 +29,7 @@ public class GameOverTest implements GameOver {
 	@Override
 	public void onSnakeCollision(MapElement element) {
 		System.out.println("Snake collided with " + element);
+		this.ended = true;
 	}
 
 	@Override

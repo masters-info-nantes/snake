@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.Font;
-
+import java.awt.Color;
 
 public class DisplayGUI implements Display {
 
@@ -120,8 +120,7 @@ public class DisplayGUI implements Display {
 				System.out.println("no sub-elements");
 				return;
 			}
-			
-			
+
 			for (MapElement subelt : elt.getSubElements()) {
 				System.out.print("(" + subelt.getX() + "," + subelt.getY() + ") ");
 				g.fillOval(subelt.getX()*pixelByCase, subelt.getY()*pixelByCase, pixelByCase, pixelByCase);
@@ -130,10 +129,23 @@ public class DisplayGUI implements Display {
 	}
 
 	public void affichageGameOver(Graphics g){
+		affichage(g);
+		g.setColor(Color.red);	
+		boolean isHead = true;
+		MapElement head = null;
+		for (MapElement elt : this.map.getElements()) {
+			if(isHead==true){
+				head = elt;
+				isHead = false;
+			}
+		}
+		g.fillOval(head.getX()*pixelByCase, head.getY()*pixelByCase, pixelByCase, pixelByCase);
+
 		String s = "Game Over";
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);		
 		g.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, 40));
+		g.setColor(Color.black);	
 		g.drawString(s,(map.getWidth()*pixelByCase)/4,(map.getHeight()*pixelByCase)/4);
 	}	
 }

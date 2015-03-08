@@ -26,10 +26,9 @@ public class Game {
 	public Game(PluginLoader pluginLoader){
 		this.pluginLoader = pluginLoader;
 		this.snake = new Snake(15,15);
+		for(int i=0;i<5;i++){
 		snake.evolve();
-		snake.evolve();
-		snake.evolve();
-		snake.evolve();
+		}
 		this.turn = 1;
 	}
 
@@ -63,6 +62,7 @@ public class Game {
 				e.printStackTrace();
 			}		
 		}
+		this.display.updateMap();		
 	}
 
 	public void nextTurn(){
@@ -72,21 +72,22 @@ public class Game {
 
 		try {
 			this.map.moveElement(this.snake, this.snake.getX(), this.snake.getY());
+		
+			//System.out.println("> Next turn: " + turn);
+			
+			this.display.updateMap();	
+			System.out.println("\n");
 		} 
 		catch (OutOfMapException e) {
 			this.display.setGameOver(true);
 			this.gameOver.onSnakeOutOfMap();
 		} 
 		catch (CollisionException e) {
+			this.display.setGameOver(true);
 			this.gameOver.onSnakeCollision(e.getElementB());
 		}
 		
-		System.out.println("> Next turn: " + turn);
-		
-		this.display.updateMap();	
-		System.out.println("\n");
-		
-		this.turn++;
-		this.gameOver.onNextTurn(this.turn);
+		//this.turn++;
+		//this.gameOver.onNextTurn(this.turn);
 	}
 }
