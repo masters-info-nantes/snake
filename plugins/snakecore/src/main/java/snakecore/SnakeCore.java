@@ -15,6 +15,8 @@ public class SnakeCore extends MGSApplication{
 	public void run() {		
 		System.out.println("-> Snake plugin");
 
+		Menu menu = new Menu();
+
 		Game game = new Game(this.pluginsLoader);
 		game.load();
 		game.start();

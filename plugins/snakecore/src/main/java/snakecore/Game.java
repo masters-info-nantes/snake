@@ -34,7 +34,7 @@ public class Game {
 			snake.evolve();
 		}
 		this.turn = 1;
-		timeToSleep = 200;
+		timeToSleep = 80;
 	}
 
 	public void load(){	
@@ -100,8 +100,8 @@ public class Game {
 				this.snake.evolve();
 				this.score.eatFrog();
 				this.score.setSpeed(timeToSleep);
-				this.frog.newFrog(map.getHeight(),map.getWidth());
-				if(this.timeToSleep > 50)
+				this.frog.newFrog(map.getWidth(),map.getHeight());
+				if(this.timeToSleep > 0)
 				{
 					this.timeToSleep -= 10;
 				}
