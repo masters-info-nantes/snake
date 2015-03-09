@@ -7,6 +7,7 @@ import snakecore.interfaces.Display;
 import snakecore.interfaces.GameOver;
 import snakecore.interfaces.Map;
 import snakecore.interfaces.Controller;
+import snakecore.interfaces.Score;
 import fr.univnantes.mgsframework.PluginLoader;
 import java.io.IOException;
 
@@ -18,18 +19,22 @@ public class Game {
 	private Map map;
 	private GameOver gameOver;
 	private Controller controller;
+	private Score score;
 	
 	private Snake snake;
+	private Frog frog;
 
 	private int turn;
+	private int timeToSleep;
 
 	public Game(PluginLoader pluginLoader){
 		this.pluginLoader = pluginLoader;
 		this.snake = new Snake(15,15);
 		for(int i=0;i<5;i++){
-		snake.evolve();
+			snake.evolve();
 		}
 		this.turn = 1;
+		timeToSleep = 200;
 	}
 
 	public void load(){	
@@ -39,13 +44,18 @@ public class Game {
 		this.display = (Display)this.pluginLoader.loadPlugin("displayGUI-0.1.jar");
 		this.gameOver = (GameOver)this.pluginLoader.loadPlugin("gameovertest-0.1.jar");
 		this.controller = (Controller)this.pluginLoader.loadPlugin("controllerArrow-0.1.jar");
+		this.score = (Score)this.pluginLoader.loadPlugin("scoreBasic-0.1.jar");
 
 		}
 		catch(IOException e){}		
 		
 		this.display.setController(this.controller);
 		this.display.setMap(this.map);
+		this.display.setScore(this.score);
 		this.map.addElement(this.snake);
+		this.frog = new Frog(25,25);
+		this.map.addElement(this.frog);
+		this.score.setSpeed(timeToSleep);
 	}
 
 	public void start(){
@@ -55,7 +65,7 @@ public class Game {
 			this.nextTurn();
 			
 			try {
-				Thread.sleep(200);
+				Thread.sleep(timeToSleep);
 			} 
 			catch (InterruptedException e) {
 				System.err.println("Game loop was interrupted with no reasons");
@@ -75,7 +85,8 @@ public class Game {
 		
 			//System.out.println("> Next turn: " + turn);
 			
-			this.display.updateMap();	
+			this.display.updateMap();
+			this.score.newTurn();	
 			System.out.println("\n");
 		} 
 		catch (OutOfMapException e) {
@@ -83,8 +94,22 @@ public class Game {
 			this.gameOver.onSnakeOutOfMap();
 		} 
 		catch (CollisionException e) {
-			this.display.setGameOver(true);
-			this.gameOver.onSnakeCollision(e.getElementB());
+
+			if(e.getElementB().getName()=="Frog")
+			{
+				this.snake.evolve();
+				this.score.eatFrog();
+				this.score.setSpeed(timeToSleep);
+				this.frog.newFrog(map.getHeight(),map.getWidth());
+				if(this.timeToSleep > 50)
+				{
+					this.timeToSleep -= 10;
+				}
+			}
+			else{
+				this.display.setGameOver(true);
+				this.gameOver.onSnakeCollision(e.getElementB());
+			}
 		}
 		
 		//this.turn++;

@@ -10,9 +10,11 @@ import snakecore.interfaces.MapElement;
 public class MapItem implements MapElement {
 	
 	protected Point position;
+	protected String name;
 	
-	public MapItem(int x, int y){
+	public MapItem(int x, int y, String name){
 		this.position = new Point(x,y);
+		this.name = name;
 	}
 	
 	@Override
@@ -37,5 +39,9 @@ public class MapItem implements MapElement {
 
 	@Override
 	public void move() {
+	}
+
+	public String getName(){
+		return name;
 	}
 }

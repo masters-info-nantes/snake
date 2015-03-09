@@ -4,7 +4,7 @@ import snakecore.interfaces.Display;
 import snakecore.interfaces.Map;
 import snakecore.interfaces.MapElement;
 import snakecore.interfaces.Controller;
-
+import snakecore.interfaces.Score;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -25,6 +25,7 @@ public class DisplayGUI implements Display {
 
 	private Map map;
 	private Controller controller;
+	private Score score;
 	private JPanel content;
 	private JFrame frame;
 	private static int pixelByCase = 15;
@@ -99,6 +100,11 @@ public class DisplayGUI implements Display {
 	}
 
 	@Override
+	public void setScore(Score score) {
+		this.score = score;
+	}
+
+	@Override
 	public void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
 	}
@@ -114,18 +120,31 @@ public class DisplayGUI implements Display {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		// dessin du serpent
 		for (MapElement elt : this.map.getElements()) {
-			System.out.print("Element [" + elt.getX() + "," + elt.getY() + "]: ");
-			
-			if(elt.getSubElements().isEmpty()){
-				System.out.println("no sub-elements");
-				return;
-			}
+			System.out.print("Element [" + elt.getX() + "," + elt.getY() + "]: -"+elt.getName()+"- ");
 
-			for (MapElement subelt : elt.getSubElements()) {
-				System.out.print("(" + subelt.getX() + "," + subelt.getY() + ") ");
-				g.fillOval(subelt.getX()*pixelByCase, subelt.getY()*pixelByCase, pixelByCase, pixelByCase);
+			if(elt.getName()=="Snake")
+			{
+				if(elt.getSubElements().isEmpty()){
+					System.out.println("no sub-elements");
+					return;
+				}
+				for (MapElement subelt : elt.getSubElements()) {
+					System.out.print("(" + subelt.getX() + "," + subelt.getY() + ") ");
+					g.fillOval(subelt.getX()*pixelByCase, subelt.getY()*pixelByCase, pixelByCase, pixelByCase);
+				}
 			}
-		}			    
+			if(elt.getName()=="Frog")
+			{
+				g.setColor(Color.red);
+				System.out.print("[Frog]");
+				g.fillRect(elt.getX()*pixelByCase, elt.getY()*pixelByCase, pixelByCase, pixelByCase);
+			}
+			System.out.println("");
+		}
+		String s = ""+this.score.getScore();
+		g.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, 10));
+		g.setColor(Color.blue);	
+		g.drawString(s,pixelByCase,pixelByCase);					    
 	}
 
 	public void affichageGameOver(Graphics g){
@@ -147,5 +166,9 @@ public class DisplayGUI implements Display {
 		g.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, 40));
 		g.setColor(Color.black);	
 		g.drawString(s,(map.getWidth()*pixelByCase)/4,(map.getHeight()*pixelByCase)/4);
+
+		String s2 = "   Score : "+score.getScore();
+		g.setFont(new Font(g.getFont().getFontName(), Font.PLAIN, 20));
+		g.drawString(s2,(map.getWidth()*pixelByCase)/3,(map.getHeight()*pixelByCase)/2);		
 	}	
 }

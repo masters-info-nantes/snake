@@ -1,0 +1,2 @@
+mainClass=scoreBasic.ScoreBasic
+category=snakecore.interfaces.Score

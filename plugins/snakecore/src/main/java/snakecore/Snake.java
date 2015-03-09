@@ -12,15 +12,15 @@ public class Snake extends MapItem {
 	private Direction direction;
 	
 	public Snake(int x,int y){
-		super(x,y);
+		super(x,y,"Snake");
 		this.corps = new LinkedList<MapItem>();
-		this.corps.addFirst(new MapItem(x,y));
+		this.corps.addFirst(new MapItem(x,y,"head"));
 		this.direction = Direction.RIGHT;
 	}
 	
 	public void evolve(){
 		MapItem tail = (MapItem) this.corps.getLast();
-		MapItem newTail = new MapItem(tail.getX() - 1, tail.getY());
+		MapItem newTail = new MapItem(tail.getX() - 1, tail.getY(),"tail");
 		this.corps.addLast(newTail);		
 	}
 	
@@ -28,7 +28,7 @@ public class Snake extends MapItem {
 	public void move(){	
 		Point nextPosition = this.nextHeadPosition();
 		if(this.corps.isEmpty()){
-			this.corps.addFirst(new MapItem((int)nextPosition.getX(), (int)nextPosition.getY()));
+			this.corps.addFirst(new MapItem((int)nextPosition.getX(), (int)nextPosition.getY(),"head"));
 		}
 		else {
 			MapItem tail = (MapItem) this.corps.removeLast();

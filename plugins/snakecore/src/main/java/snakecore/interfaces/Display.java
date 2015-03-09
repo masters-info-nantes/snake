@@ -1,5 +1,7 @@
 package snakecore.interfaces;
 
+import snakecore.interfaces.Score;
+
 public interface Display 
 {
 	public void sayHello();
@@ -9,5 +11,5 @@ public interface Display
 	public void setController(Controller controller);
 	public void updateMap();
 	public void setGameOver(boolean gameOver);
-		
+	public void setScore(Score score);	
 }

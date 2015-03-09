@@ -33,18 +33,32 @@ public class MapGUI implements Map {
 		{
 			throw new OutOfMapException();
 		}	
-		boolean head = false;
-		for (MapElement subelt : element.getSubElements()) {
-			if( (x==subelt.getX())&&(y==subelt.getY()) )
+		for (MapElement elt : elts) {
+
+			if(elt.getName()=="Snake")
 			{
-				if(head == true){
-					throw new CollisionException(element,subelt);
-				}
-				else{
-					head = true;
+				boolean head = false;
+				for (MapElement subelt : elt.getSubElements()) {
+					if( (x==subelt.getX())&&(y==subelt.getY()) )
+					{
+						if(head == true){
+							throw new CollisionException(element,subelt);
+						}
+						else{
+							head = true;
+						}
+					}
 				}
 			}
-		}
+			if(elt.getName()=="Frog")
+			{
+				if( (x==elt.getX())&&(y==elt.getY()) )
+				{				
+					throw new CollisionException(element,elt);
+				}
+			}
+
+		}		
 	}
 
 	@Override
