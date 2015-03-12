@@ -313,6 +313,10 @@ public class PluginLoader {
 	 * @return all plugins with the given category
 	 */
 	public List<Plugin> getClassicPluginsByCategory(String category){
-		return this.pluginsByCategories.get(category);
+		List<Plugin> list = this.pluginsByCategories.get(category);
+		if(list == null){
+			list = new ArrayList<Plugin>();
+		}
+		return list;
 	}
 }

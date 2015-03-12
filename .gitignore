@@ -6,6 +6,7 @@ target/
 *.out
 *.synctex.gz
 *.toc
-platform/.classpath
-platform/.project
-platform/.settings
+.classpath
+.project
+.settings
+platform/resources/plugins/*.jar

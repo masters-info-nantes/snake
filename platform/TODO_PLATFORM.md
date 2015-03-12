@@ -3,9 +3,8 @@
 Voir le manuel dans [manuel/manuel.pdf](https://github.com/masters-info-nantes/snake/raw/master/manuel/manuel.pdf) qui décrit le framework, son organisation, quelques détails de fonctionnement et un example de création d'un plugin
 
 ## Todo
-* Plugin principal pour lister les plugins
 * Chemin relatif vers le jar 
-* Revoir la doc
+* Ajouter description outils annexes
 
 ## Done
 * Scan du dossier des plugins
