@@ -39,7 +39,7 @@ import javax.swing.table.TableModel;
 import fr.univnantes.mgsframework.Plugin;
 import fr.univnantes.mgsframework.RunnablePlugin;
 
-public class View extends JFrame implements ListSelectionListener, ItemListener, ActionListener {
+public class View extends JFrame {
 	
 	private JLabel labelPluginPath;
 	private JLabel labelStartPlugin;
@@ -53,18 +53,11 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 	private JComboBox comboPluginInterfaces;
 	private JTable tableSecondaryPlugins;
 	
-	private RunnablePlugin currentPlugin;
-	private Collection<RunnablePlugin> runnablePlugins;
-	private Model model;
-	
 	private static int TABLE_LINE_MAX = 7;
 	
-	public View(Model model){
+	public View(Controller controller){
 		
 		super("MGS platform inspector");
-		
-		this.model = model;
-		this.runnablePlugins = model.getMainPluginList();
 		
 		// Interface
 		JPanel panelRoot = new JPanel();
@@ -77,13 +70,14 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 		panelPlatform.setLayout(new SpringLayout());
 		panelPlatform.setBorder(BorderFactory.createTitledBorder("Platform settings"));
 		
-		this.labelPluginPath = new JLabel(model.getPluginsPath());
-		this.labelStartPlugin = new JLabel(model.getStartPluginName());
+		this.labelPluginPath = new JLabel();
+		this.labelStartPlugin = new JLabel();
 		
 		panelPlatform.add(new JLabel("Plugins path: "));
 		panelPlatform.add(this.labelPluginPath);
 		panelPlatform.add(new JLabel("Start plugin: "));
 		panelPlatform.add(this.labelStartPlugin);
+		panelPlatform.setMaximumSize(new Dimension());
 		
 		SpringUtilities.makeCompactGrid(panelPlatform, 2, 2, 6, 6, 6, 6);
 		
@@ -95,7 +89,7 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 		this.listMainPlugins = new JList();
 		//this.listMainPlugins.setMinimumSize(new Dimension(150, 240));
 		this.listMainPlugins.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		this.listMainPlugins.addListSelectionListener(this);
+		this.listMainPlugins.addListSelectionListener(controller);
 		
 		// > Panel plugins Infos
 		JPanel panelPluginDetails = new JPanel();
@@ -118,7 +112,7 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 		
         ImageIcon icon = new ImageIcon("../plugins/platforminspector/src/main/resources/start.png");		
 		JButton buttonStartPlugin = new JButton(icon);
-		buttonStartPlugin.addActionListener(this);
+		buttonStartPlugin.addActionListener(controller);
         panelButtonStart.add(buttonStartPlugin);
         
 		panelPluginInfoText.add(new JLabel("Name: "));
@@ -143,7 +137,7 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 		panelPluginsInterfaces.setMaximumSize(new Dimension(250, 40));
 		
 		this.comboPluginInterfaces = new JComboBox<String>();
-		this.comboPluginInterfaces.addItemListener(this);
+		this.comboPluginInterfaces.addItemListener(controller);
 		panelPluginsInterfaces.add(new JLabel("Interfaces: "));
 		panelPluginsInterfaces.add(this.comboPluginInterfaces);
 		
@@ -175,15 +169,6 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 
 		this.setPreferredSize(new Dimension(600, 400));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
-		
-		// Init list
-		Collection<String> list = new ArrayList<String>();
-		for(RunnablePlugin r: this.runnablePlugins){
-			list.add(r.getName());
-		}
-		
-		this.listMainPlugins.setListData(list.toArray());
-		this.listMainPlugins.setSelectedIndex(0);		
 	}
 	
 	public void display(){
@@ -191,38 +176,46 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 		this.setVisible(true);
 	}
 	
-	public void setMainPluginsList(Collection<RunnablePlugin> plugins){
-		
+	public void setPluginPath(String text){
+		this.labelPluginPath.setText(text);
+	}
+	
+	public void setStartPlugin(String text){
+		this.labelStartPlugin.setText(text);
 	}
 
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		
-		for(RunnablePlugin r: this.runnablePlugins){
-			if(r.getName().equals(this.listMainPlugins.getSelectedValue())){
-				this.currentPlugin = r;
-			}
+	public void setPluginInfosName(String text){
+		this.labelPluginInfosName.setText(text);
+	}
+	
+	public void setPluginInfosMainClass(String text){
+		this.labelPluginInfosMainClass.setText(text);
+	}
+	
+	public void setPluginInfosDescription(String text){
+		this.labelPluginInfosDescription.setText(text);
+	}	
+	
+	public void setMainPluginList(Collection<String> list){
+		this.listMainPlugins.setListData(list.toArray());
+		if(!list.isEmpty()){
+			this.listMainPlugins.setSelectedIndex(0);
 		}
-		
-		this.labelPluginInfosName.setText(this.currentPlugin.getName());
-		this.labelPluginInfosMainClass.setText(this.currentPlugin.getMainClass());
-		this.labelPluginInfosDescription.setText(this.currentPlugin.getDescription());
-		
+	}
+	
+	public void setInterfacesList(Collection<String> list){
 		this.comboPluginInterfaces.removeAllItems();
-		for(String s : this.currentPlugin.getCategories()){
-			String[] splits = s.split("\\.");
-			this.comboPluginInterfaces.addItem(splits[splits.length-1]);
+		for(String s : list){
+			this.comboPluginInterfaces.addItem(s);
 		}
 	
-		if(!this.currentPlugin.getCategories().isEmpty()){
+		if(!list.isEmpty()){
 			this.comboPluginInterfaces.setSelectedIndex(0);	
 		}
 	}
+	
+	public void setSecondaryList(Collection<Plugin> plugins){
 
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		
-		JComboBox combo = (JComboBox) e.getSource();
 		TableModel tableModel = this.tableSecondaryPlugins.getModel();
 		for(int i = 0; i < View.TABLE_LINE_MAX; i++){
 			tableModel.setValueAt("" , i, 0);
@@ -230,13 +223,7 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 			tableModel.setValueAt("" , i, 2);			
 		}		
 		this.tableSecondaryPlugins.setModel(tableModel);
-		
-		if(combo.getSelectedIndex() < 0) return;
 
-		String category = (String) this.currentPlugin.getCategories().toArray()[combo.getSelectedIndex()];
-		Collection<Plugin> plugins = this.model.getPluginsByCategory(category);
-		if(plugins == null) return;
-		
 		tableModel = this.tableSecondaryPlugins.getModel();
 		for(int i = 0; i < plugins.size(); i++){
 			Plugin p = (Plugin) plugins.toArray()[i];
@@ -246,26 +233,7 @@ public class View extends JFrame implements ListSelectionListener, ItemListener,
 			tableModel.setValueAt(p.getDescription() , i, 2);			
 		}
 		
-		this.tableSecondaryPlugins.setModel(tableModel);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-
-		Runnable r = new Runnable() {
-            public void run() {
-        		try {
-        			model.runMainPlugin(currentPlugin);
-        		} 
-        		catch (IOException e1) {
-        			JOptionPane.showMessageDialog(null, e1.getMessage());
-        		}
-            }
-        };
-        
-        Thread myThread = new Thread(r);
-        myThread.setDaemon(true);
-        myThread.start();
+		this.tableSecondaryPlugins.setModel(tableModel);		
 	}
 }
 

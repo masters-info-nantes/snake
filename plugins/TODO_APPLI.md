@@ -2,7 +2,6 @@
 
 ## Modules 
 * **Moteur**
-* Langue
 * Terrain (moteur)
 * Interface graphique
 * Controleur (touches clavier)
@@ -10,8 +9,9 @@
 * Condition de fin de partie (timer, murs, survie, obstacles, ...)
 
 ## Todo
-* Garder le dernier élément supprimé pour évolution
-* Developper des plugins secondaires
+* Ecran d'accueil du jeu et choix des plugins secondaires
+* Plugins optionels
+* Plusieurs plugins à la fois
 
 ## Done
 * Conception de l'architecture du jeu
