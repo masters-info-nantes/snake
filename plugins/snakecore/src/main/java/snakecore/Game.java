@@ -11,6 +11,8 @@ import snakecore.interfaces.Score;
 import fr.univnantes.mgsframework.PluginLoader;
 import java.io.IOException;
 
+import java.util.*;
+
 public class Game {
 	
 	private PluginLoader pluginLoader;
@@ -34,17 +36,41 @@ public class Game {
 			snake.evolve();
 		}
 		this.turn = 1;
-		timeToSleep = 80;
+		timeToSleep = 200;
 	}
 
-	public void load(){	
+	public void load(HashMap<String,ArrayList<String>> pluginsSelected){	
 		try{	
 
-		this.map = (Map)this.pluginLoader.loadPlugin("mapGUI-0.1.jar");
-		this.display = (Display)this.pluginLoader.loadPlugin("displayGUI-0.1.jar");
-		this.gameOver = (GameOver)this.pluginLoader.loadPlugin("gameovertest-0.1.jar");
-		this.controller = (Controller)this.pluginLoader.loadPlugin("controllerArrow-0.1.jar");
-		this.score = (Score)this.pluginLoader.loadPlugin("scoreBasic-0.1.jar");
+		ArrayList<String> maps = pluginsSelected.get("Map");
+		for(String map : maps)
+		{
+			this.map = (Map)this.pluginLoader.loadPlugin(map);
+		}
+		ArrayList<String> displays = pluginsSelected.get("Display");
+		for(String display : displays)
+		{
+			this.display = (Display)this.pluginLoader.loadPlugin(display);
+		}
+		ArrayList<String> overs = pluginsSelected.get("GameOver");
+		for(String over : overs)
+		{
+			this.gameOver = (GameOver)this.pluginLoader.loadPlugin(over);
+		}
+		ArrayList<String> controls = pluginsSelected.get("Controller");
+		for(String control : controls)
+		{
+			this.controller = (Controller)this.pluginLoader.loadPlugin(control);
+		}
+		ArrayList<String> scores = pluginsSelected.get("Score");
+		for(String score : scores)
+		{
+			this.score = (Score)this.pluginLoader.loadPlugin(score);
+		}						
+		//this.display = (Display)this.pluginLoader.loadPlugin(pluginsSelected.get("display"));
+		//this.gameOver = (GameOver)this.pluginLoader.loadPlugin(pluginsSelected.get("gameOver"));
+		//this.controller = (Controller)this.pluginLoader.loadPlugin(pluginsSelected.get("controller"));
+		//this.score = (Score)this.pluginLoader.loadPlugin(pluginsSelected.get("score"));
 
 		}
 		catch(IOException e){}		
@@ -101,7 +127,7 @@ public class Game {
 				this.score.eatFrog();
 				this.score.setSpeed(timeToSleep);
 				this.frog.newFrog(map.getWidth(),map.getHeight());
-				if(this.timeToSleep > 0)
+				if(this.timeToSleep > 50)
 				{
 					this.timeToSleep -= 10;
 				}

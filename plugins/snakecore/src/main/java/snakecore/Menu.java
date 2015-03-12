@@ -19,14 +19,26 @@ import java.awt.event.KeyEvent;
 import java.awt.Font;
 import java.awt.Color;
 
+import java.util.*;
+
+import fr.univnantes.mgsframework.MGSApplication;
+import fr.univnantes.mgsframework.Plugin;
+
 public class Menu {
 
+	private SnakeCore snakecore;
 	private JPanel content;
 	private JFrame frame;
 	private final int width = 300;
 	private final int height = 300;
 
-	public Menu(){
+	private HashMap pluginsSelected;	
+
+	public Menu(SnakeCore s){
+		snakecore = s;
+
+		DefaultPlugin d = new DefaultPlugin();
+		pluginsSelected = d.getDefaultPlugins();
 
         /*titre de la fenêtre*/
         frame = new JFrame("SnakeLauncher");
@@ -45,7 +57,26 @@ public class Menu {
         };
 
         JButton start = new JButton("  Start Game  ");
+		start.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				snakecore.runSnake(pluginsSelected);
+			}
+		});
+
+
+
         JButton config = new JButton("Configuration");
+		config.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				Model m = snakecore.runConfig();
+				MenuConfig config = new MenuConfig(m,pluginsSelected);
+				config.setVisible( true );
+			}
+		});
 
         /*Methode pour faire un espace la plus moche de l'univers ! */
         JButton espace = new JButton("");             
@@ -84,5 +115,6 @@ public class Menu {
 		g.setColor(Color.black);	
 		g.drawString(s,90,90);
 	}
+
 
 }

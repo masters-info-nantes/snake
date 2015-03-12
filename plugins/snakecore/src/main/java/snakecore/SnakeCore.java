@@ -3,26 +3,49 @@ package snakecore;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
+import javax.swing.JOptionPane;
 
 import fr.univnantes.mgsframework.MGSApplication;
 import fr.univnantes.mgsframework.Plugin;
 
 import snakecore.interfaces.Display; 
+import java.util.*;
 
 public class SnakeCore extends MGSApplication{
+
+	HashMap pluginsSelected;
 
 	@Override
 	public void run() {		
 		System.out.println("-> Snake plugin");
 
-		Menu menu = new Menu();
+		Menu menu = new Menu(this);
 
-		Game game = new Game(this.pluginsLoader);
-		game.load();
-		game.start();
+	}
+
+	public Model runConfig(){
+		Model model = new Model(this.pluginsLoader,this.currentPlugin);
+		return model;	
+	}
+
+	public void runSnake(HashMap plugins) {
+		this.pluginsSelected = plugins;
+		Runnable r = new Runnable() {
+		public void run() {
+			Game game = new Game(pluginsLoader);
+			game.load(pluginsSelected);
+			game.start();
+		    }
+		};
+		
+		Thread myThread = new Thread(r);
+		myThread.setDaemon(true);
+		myThread.start();
+
 
 		System.out.println("\n-> Snake end");
 	}
+	
 
 	public void frameworkUsageExample(){
 		System.out.println("\n" + this.currentPlugin);
