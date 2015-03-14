@@ -1,0 +1,2 @@
+mainClass=controllerZQSD.ControllerZQSD
+category=snakecore.interfaces.Controller

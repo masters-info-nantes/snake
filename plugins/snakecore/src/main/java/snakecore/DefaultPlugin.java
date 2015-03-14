@@ -20,7 +20,7 @@ class DefaultPlugin
 		this.map = "mapGUI-0.1.jar";
 		this.display = "displayGUI-0.1.jar";
 		this.gameOver = "gameovertest-0.1.jar";
-		this.controller = "controllerArrow-0.1.jar";
+		this.controller = "controllerZQSD-0.1.jar";
 		this.score = "scoreBasic-0.1.jar";		
 	}
 
@@ -28,41 +28,61 @@ class DefaultPlugin
 		return display;
 	}
 
-	public int getNbDisplay(){
+	public int getNbDisplayMax(){
 		return 1;
 	}
+
+	public int getNbDisplayMin(){
+		return 1;
+	}	
 
 	public String getMap(){
 		return map;
 	}
 
-	public int getNbMap(){
+	public int getNbMapMax(){
 		return 1;
 	}
+
+	public int getNbMapMin(){
+		return 1;
+	}	
 
 	public String getGameOver(){
 		return gameOver;
 	}
 
-	public int getNbGameOver(){
+	public int getNbGameOverMax(){
 		return 1;
 	}
+
+	public int getNbGameOverMin(){
+		return 1;
+	}	
 
 	public String getController(){
 		return controller;
 	}
 
-	public int getNbController(){
+	public int getNbControllerMax(){
 		return 1;
 	}
+
+	public int getNbControllerMin(){
+		return 1;
+	}	
 
 	public String getScore(){
 		return score;
 	}	
 
-	public int getNbScore(){
+	public int getNbScoreMax(){
 		return 1;
 	}
+
+	public int getNbScoreMin(){
+		return 1;
+	}	
 
 	public HashMap<String,ArrayList<String>> getDefaultPlugins(){
 		HashMap res = new HashMap();

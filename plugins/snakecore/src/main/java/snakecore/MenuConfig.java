@@ -9,6 +9,10 @@ import fr.univnantes.mgsframework.RunnablePlugin;
 import java.util.Collection;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 class MenuConfig extends JFrame
 {
@@ -21,12 +25,12 @@ class MenuConfig extends JFrame
 	private RunnablePlugin currentPlugin;
 	private Model model;	
 
-	private HashMap<String,ArrayList<String>> pluginsSelected;
+	private PluginAdministrator admin;
 
-	public MenuConfig(Model model,HashMap pluginsSelected)
+	public MenuConfig(Model model,PluginAdministrator admin)
 	{
 		this.model = model;
-		this.pluginsSelected = pluginsSelected;
+		this.admin = admin;
 
 		// Fenetre 		
 		setTitle( "Configuration" );
@@ -103,13 +107,14 @@ class MenuConfig extends JFrame
 				Plugin p = (Plugin) plugins.toArray()[i];	
 
 				String[] splits = category.split("\\.");
-				ArrayList<String> values = pluginsSelected.get(splits[splits.length-1]);
+				String nameCategory = splits[splits.length-1];
+				ArrayList<String> values = admin.getPluginsSelected().get(nameCategory);
 
 				if(values.contains(p.getName())){
-					panelMain.add(createSection(p,true));
+					panelMain.add(createSection(p,nameCategory,true));
 				}		
 				else{
-					panelMain.add(createSection(p,false));
+					panelMain.add(createSection(p,nameCategory,false));
 				}				
 			}
 
@@ -122,7 +127,7 @@ class MenuConfig extends JFrame
 	}
 
 	/* boolean a true pour cocher par default le checkbox */
-	public JPanel createSection(Plugin plugin,boolean coche)
+	public JPanel createSection(final Plugin plugin,final String category, boolean coche)
 	{
 		JPanel panelPlugin = new JPanel();
 		panelPlugin.setLayout(new BorderLayout());
@@ -139,10 +144,19 @@ class MenuConfig extends JFrame
 			check.setSelected(true);
 		}
 
+		admin.addCheckBox(check,plugin.getName());
+
         panelButton.add(check);
-		check.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				System.out.println("Checked? " + check.isSelected());
+		check.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(" status du bouton : "+check.isSelected());
+				if(check.isSelected()==true){
+					admin.add(category,check,plugin.getName());
+				}
+				else{
+					admin.remove(category,check,plugin.getName());
+				}
+
 			}
 		});        
         

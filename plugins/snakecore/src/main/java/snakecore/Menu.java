@@ -32,13 +32,12 @@ public class Menu {
 	private final int width = 300;
 	private final int height = 300;
 
-	private HashMap pluginsSelected;	
+	private PluginAdministrator admin;
 
 	public Menu(SnakeCore s){
 		snakecore = s;
 
-		DefaultPlugin d = new DefaultPlugin();
-		pluginsSelected = d.getDefaultPlugins();
+		admin = new PluginAdministrator();
 
         /*titre de la fenêtre*/
         frame = new JFrame("SnakeLauncher");
@@ -61,7 +60,7 @@ public class Menu {
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				snakecore.runSnake(pluginsSelected);
+				snakecore.runSnake(admin.getPluginsSelected());
 			}
 		});
 
@@ -73,7 +72,7 @@ public class Menu {
 			public void actionPerformed(ActionEvent e)
 			{
 				Model m = snakecore.runConfig();
-				MenuConfig config = new MenuConfig(m,pluginsSelected);
+				MenuConfig config = new MenuConfig(m,admin);
 				config.setVisible( true );
 			}
 		});
