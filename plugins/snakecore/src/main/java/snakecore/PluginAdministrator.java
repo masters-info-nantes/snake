@@ -83,6 +83,9 @@ public class PluginAdministrator{
 		  	case "Score":
 		    	nbPluginMax = defaultPlugin.getNbScoreMax();
 		    	break;
+		  	case "SnakeEvent":
+		    	nbPluginMax = defaultPlugin.getNbSnakeEventMax();
+		    	break;		    	
 		  	default:
 		    	nbPluginMax = 1;
 		}
@@ -107,6 +110,9 @@ public class PluginAdministrator{
 		  	case "Score":
 		    	nbPluginMin = defaultPlugin.getNbScoreMin();
 		    	break;
+		  	case "SnakeEvent":
+		    	nbPluginMin = defaultPlugin.getNbSnakeEventMin();
+		    	break;		    	
 		  	default:
 		    	nbPluginMin = 1;
 		}

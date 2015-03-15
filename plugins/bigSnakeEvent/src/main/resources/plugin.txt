@@ -1,0 +1,3 @@
+mainClass=bigSnakeEvent.BigSnakeEvent
+category=snakecore.interfaces.SnakeEvent
+description=Mode Hard : big snake

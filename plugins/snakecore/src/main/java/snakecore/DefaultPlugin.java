@@ -84,6 +84,14 @@ class DefaultPlugin
 		return 1;
 	}	
 
+	public int getNbSnakeEventMax(){
+		return 10;
+	}
+
+	public int getNbSnakeEventMin(){
+		return 0;
+	}
+
 	public HashMap<String,ArrayList<String>> getDefaultPlugins(){
 		HashMap res = new HashMap();
 
@@ -107,6 +115,8 @@ class DefaultPlugin
 		scores.add(getScore());		
 		res.put("Score",scores);
 
+		ArrayList<String> events = new ArrayList();	
+		res.put("SnakeEvent",events);
 
 		return res;
 	}		

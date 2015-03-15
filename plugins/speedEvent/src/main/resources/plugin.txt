@@ -1,0 +1,3 @@
+mainClass=speedEvent.SpeedEvent
+category=snakecore.interfaces.SnakeEvent
+description=Mode Hardcore : ultra speed

@@ -10,6 +10,7 @@ import fr.univnantes.mgsframework.Plugin;
 
 import snakecore.interfaces.Display; 
 import java.util.*;
+import snakecore.menu.*;
 
 public class SnakeCore extends MGSApplication{
 

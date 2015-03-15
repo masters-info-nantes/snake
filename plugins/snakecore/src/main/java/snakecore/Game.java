@@ -8,6 +8,7 @@ import snakecore.interfaces.GameOver;
 import snakecore.interfaces.Map;
 import snakecore.interfaces.Controller;
 import snakecore.interfaces.Score;
+import snakecore.interfaces.SnakeEvent;
 import fr.univnantes.mgsframework.PluginLoader;
 import java.io.IOException;
 
@@ -22,21 +23,13 @@ public class Game {
 	private GameOver gameOver;
 	private Controller controller;
 	private Score score;
+	private ArrayList<SnakeEvent> snakeEvent;
 	
-	private Snake snake;
-	private Frog frog;
-
-	private int turn;
-	private int timeToSleep;
+	private Data data;
 
 	public Game(PluginLoader pluginLoader){
 		this.pluginLoader = pluginLoader;
-		this.snake = new Snake(15,15);
-		for(int i=0;i<5;i++){
-			snake.evolve();
-		}
-		this.turn = 1;
-		timeToSleep = 200;
+		data = new Data();
 	}
 
 	public void load(HashMap<String,ArrayList<String>> pluginsSelected){	
@@ -66,7 +59,14 @@ public class Game {
 		for(String score : scores)
 		{
 			this.score = (Score)this.pluginLoader.loadPlugin(score);
-		}						
+		}	
+		ArrayList<String> events = pluginsSelected.get("SnakeEvent");
+		snakeEvent = new ArrayList<SnakeEvent>();
+		for(String event : events)
+		{
+			snakeEvent.add( (SnakeEvent)this.pluginLoader.loadPlugin(event) );
+		}
+
 		//this.display = (Display)this.pluginLoader.loadPlugin(pluginsSelected.get("display"));
 		//this.gameOver = (GameOver)this.pluginLoader.loadPlugin(pluginsSelected.get("gameOver"));
 		//this.controller = (Controller)this.pluginLoader.loadPlugin(pluginsSelected.get("controller"));
@@ -78,20 +78,27 @@ public class Game {
 		this.display.setController(this.controller);
 		this.display.setMap(this.map);
 		this.display.setScore(this.score);
-		this.map.addElement(this.snake);
-		this.frog = new Frog(25,25);
-		this.map.addElement(this.frog);
-		this.score.setSpeed(timeToSleep);
+		this.map.addElement(data.snake);
+		data.frog = new Frog(25,25);
+		this.map.addElement(data.frog);
+		this.score.setSpeed(data.timeToSleep);
 	}
 
 	public void start(){
 		this.display.show();
 
+		if(!snakeEvent.isEmpty()){
+			for(SnakeEvent event : snakeEvent)
+			{
+				event.onStart(data);
+			}				
+		}
+
 		while(!this.gameOver.isGameOver()){ 
 			this.nextTurn();
 			
 			try {
-				Thread.sleep(timeToSleep);
+				Thread.sleep(data.timeToSleep);
 			} 
 			catch (InterruptedException e) {
 				System.err.println("Game loop was interrupted with no reasons");
@@ -102,12 +109,18 @@ public class Game {
 	}
 
 	public void nextTurn(){
-		this.snake.setDirection(controller.getLastDirection());	
+		data.snake.setDirection(controller.getLastDirection());	
+		data.snake.move();
 
-		this.snake.move();
+		if(!snakeEvent.isEmpty()){
+			for(SnakeEvent event : snakeEvent)
+			{
+				event.onNextTurn(data);
+			}				
+		}		
 
 		try {
-			this.map.moveElement(this.snake, this.snake.getX(), this.snake.getY());
+			this.map.moveElement(data.snake, data.snake.getX(), data.snake.getY());
 		
 			//System.out.println("> Next turn: " + turn);
 			
@@ -123,14 +136,21 @@ public class Game {
 
 			if(e.getElementB().getName()=="Frog")
 			{
-				this.snake.evolve();
+				data.snake.evolve();
 				this.score.eatFrog();
-				this.score.setSpeed(timeToSleep);
-				this.frog.newFrog(map.getWidth(),map.getHeight());
-				if(this.timeToSleep > 50)
+				this.score.setSpeed(data.timeToSleep);
+				data.frog.newFrog(map.getWidth(),map.getHeight());
+				if(data.timeToSleep > data.sleepLimit)
 				{
-					this.timeToSleep -= 10;
+					data.timeToSleep += data.sleepGain;
 				}
+
+				if(!snakeEvent.isEmpty()){
+					for(SnakeEvent event : snakeEvent)
+					{
+						event.onEatFrog(data);
+					}				
+				}				
 			}
 			else{
 				this.display.setGameOver(true);
