@@ -50,7 +50,7 @@ fichier la moins contraignante possible.
 \section{Recommandations et pré-requis}
 L'ensemble du framework et des plugins sont tous gérés sous la forme de projets 
 \emph{maven}. Il est donc necessaire d'avoir cet outil installé pour développer 
-sur la plateforme.
+la plateforme.
 \\\\
 Notez qu'il est tout à fait possible d'utiliser le framework sous forme de d'archive 
 \emph{jar} pour l'inclure dans un projet n'utilisant pas \emph{maven}. Le choix de 
@@ -401,4 +401,41 @@ démarrer le plugin par défaut qui a été indiqué avec \emph{startplugin} dan
 fichier de configuration. Tout de fois, si le fichier de configuration du 
 framework indique l'utilisation du mode debug ce sera l'inspecteur de plateforme 
 qui sera lancé.
+
+\section{Outils de la plateforme}
+\subsection{Importation des plugins}
+Tout les plugins que la platforme utilise doivent être placés dans son sous-
+répertoire \emph{resources/plugins} sous forme d'archives jar.
+\\\\
+Pour faciler le développement et l'installation de tout les plugins d'un seul 
+coup nous avons créer le script bash \emph{/plugins/importPluginsOnPlatform.sh}.
+Ce dernier permet de compiler tout les plugins et de les importer automatiquement
+dans la platforme.
+\\\\
+Il est possible de passer un argument -- nom du dossier d'un plugin -- afin de 
+préciser le plugin qui doit etre importé afin d'éviter de tout les importer
+à chaque fois.
+
+\subsection{Patrons de plugins}
+Au cours du développement, nous avons fait le choix d'utiliser \emph{maven} 
+pour gérer chaque projet représentant un plugin. Le script 
+\emph{/plugins/createPlugin.sh} permet de générer de manière automatique un 
+projet maven pour démarrer le développement d'un nouveau plugin.
+\\\\
+Les informations à propos du plugins sont demandés de manière interactive ce
+qui permet d'annuler à tout moment la création du plugin.
+
+\subsection{Inspecteur de plateforme}
+Nous avons créer un plugin -- utilisant notre platforme -- qui sous la forme
+d'une interface graphique permet de visualiser les réglages de la plateforme.
+\\\\
+En plus d'afficher le contenu du fichier \emph{/platform/resources/settings.txt}, 
+cet outil donne la liste de tout les plugins principaux que la plateforme
+est capable de charger. L'interface montre également la configuration de ces plugins
+ainsi que les interfaces définies et les plugins secondaires les utilisant.
+\\\\
+Il est possible à tout moment, de lancer un plugin principal à partir de cet outil 
+et celui-ci se lancera de manière automatique si le fichier de configuration 
+de la plateforme indique que le mode \emph{debug} est actif.
+
 \end{document}
