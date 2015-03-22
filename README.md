@@ -37,11 +37,11 @@ $ ./importPluginsOnPlatform.sh
 ```
 
 ### Run the platform
-The last thing to do is to import the platform project in eclipse and run it :
+The last thing to do is to run the platform :
 
 ```
 $ cd ../platform
-$ mvn eclipse:eclipse
+$ mvn exec:java
 ```
 
 ## Authors

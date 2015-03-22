@@ -104,7 +104,7 @@ public class PluginLoader {
 		URL[] pathArray = new URL[pluginsPaths.size()];
 		pathArray = pluginsPaths.toArray(pathArray);
 	
-		this.loader = new URLClassLoader(pathArray);
+		this.loader = new URLClassLoader(pathArray, PluginLoader.class.getClassLoader());
 	}
 	
 	/**
