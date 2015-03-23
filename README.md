@@ -17,13 +17,10 @@ $ mvn install
 
 ### Compile plugins
 Change your plugins path in *platform/resources/settings.txt*.
-Now, lets install the main plugins to be able to import all plugins afte:
+Now, lets install the plugin game to be able to import all plugins after:
 
 ```
 $ cd ../plugins/snakecore
-$ mvn install
-
-$ cd ../platforminspector
 $ mvn install
 
 ```
@@ -46,5 +43,4 @@ $ mvn exec:java
 
 ## Authors
 * Antoine Forgerou
-* David Brevet
 * Jérémy Bardon
