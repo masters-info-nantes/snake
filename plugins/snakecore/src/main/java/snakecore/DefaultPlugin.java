@@ -65,7 +65,7 @@ class DefaultPlugin
 	}
 
 	public int getNbControllerMax(){
-		return 1;
+		return 10;
 	}
 
 	public int getNbControllerMin(){

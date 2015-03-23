@@ -21,10 +21,12 @@ import java.awt.event.KeyEvent;
 import java.awt.Font;
 import java.awt.Color;
 
+import java.util.*;
+
 public class DisplayGUI implements Display {
 
 	private Map map;
-	private Controller controller;
+	private ArrayList<Controller> controller;
 	private Score score;
 	private JPanel content;
 	private JFrame frame;
@@ -60,7 +62,10 @@ public class DisplayGUI implements Display {
 			@Override
 	      	public void keyPressed(KeyEvent e) {
 	      		System.out.println(e);
-        		controller.updateEvent(e);
+				for(Controller control : controller)
+				{
+					control.updateEvent(e);
+				}	      		
   			}
 		});	
 		frame.setFocusable(false);
@@ -85,7 +90,7 @@ public class DisplayGUI implements Display {
 	}
 
 	@Override
-	public void setController(Controller controller)
+	public void setController(ArrayList<Controller> controller)
 	{
 		this.controller = controller;
 	}

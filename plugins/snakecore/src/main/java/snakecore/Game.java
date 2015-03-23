@@ -21,7 +21,7 @@ public class Game {
 	private Display display;
 	private Map map;
 	private GameOver gameOver;
-	private Controller controller;
+	private ArrayList<Controller> controller;
 	private Score score;
 	private ArrayList<SnakeEvent> snakeEvent;
 	
@@ -51,9 +51,10 @@ public class Game {
 			this.gameOver = (GameOver)this.pluginLoader.loadPlugin(over);
 		}
 		ArrayList<String> controls = pluginsSelected.get("Controller");
+		controller = new ArrayList<Controller>();
 		for(String control : controls)
 		{
-			this.controller = (Controller)this.pluginLoader.loadPlugin(control);
+			controller.add ( (Controller)this.pluginLoader.loadPlugin(control) );
 		}
 		ArrayList<String> scores = pluginsSelected.get("Score");
 		for(String score : scores)
@@ -82,10 +83,17 @@ public class Game {
 		data.frog = new Frog(25,25);
 		this.map.addElement(data.frog);
 		this.score.setSpeed(data.timeToSleep);
+
+		for(Controller control : controller)
+		{
+			control.setData(data);
+		}
 	}
 
 	public void start(){
 		this.display.show();
+
+		data.snake.setDirection(Direction.RIGHT);
 
 		if(!snakeEvent.isEmpty()){
 			for(SnakeEvent event : snakeEvent)
@@ -109,7 +117,7 @@ public class Game {
 	}
 
 	public void nextTurn(){
-		data.snake.setDirection(controller.getLastDirection());	
+		//data.snake.setDirection(controller.getLastDirection());	
 		data.snake.move();
 
 		if(!snakeEvent.isEmpty()){

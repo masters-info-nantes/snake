@@ -67,6 +67,10 @@ public class Snake extends MapItem {
 	public void setDirection(Direction direction){
 		this.direction = direction;
 	}
+
+	public Direction getDirection(){
+		return this.direction;
+	}
 	
 	@Override
 	public int getX() {

@@ -1,6 +1,7 @@
 package snakecore.interfaces;
 
 import snakecore.interfaces.Score;
+import java.util.*;
 
 public interface Display 
 {
@@ -8,7 +9,7 @@ public interface Display
 	
 	public void show();
 	public void setMap(Map map);
-	public void setController(Controller controller);
+	public void setController(ArrayList<Controller> controller);
 	public void updateMap();
 	public void setGameOver(boolean gameOver);
 	public void setScore(Score score);	

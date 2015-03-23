@@ -80,7 +80,7 @@ class MenuConfig extends JFrame
 		// Create the tab pages
 		for(String s : this.model.getInterfacesCurrentPlugin()){
 			String[] splits = s.split("\\.");
-			JScrollPane page = createPage(s);
+			JPanel page = createPage(s);
 			if(page!=null)
 			{
 				tabbedPane.addTab( splits[splits.length-1],createPage(s) );
@@ -99,8 +99,9 @@ class MenuConfig extends JFrame
 		this.dispose();
 	}
 
-	public JScrollPane createPage(String category)
+	public JPanel createPage(String category)
 	{
+		JPanel global = new JPanel();
 		JPanel panelMain = new JPanel();
 		JScrollPane scrollPane;
 
@@ -108,7 +109,9 @@ class MenuConfig extends JFrame
 
 		Collection<Plugin> plugins = this.model.getPluginsByCategory(category);
 
-		if(plugins != null)
+		JLabel label = new JLabel();
+
+		if(!plugins.isEmpty())
 		{
 			System.out.println(" plugin : "+plugins);
 
@@ -122,6 +125,21 @@ class MenuConfig extends JFrame
 				String nameCategory = splits[splits.length-1];
 				ArrayList<String> values = admin.getPluginsSelected().get(nameCategory);
 
+				int valMax = admin.nbPluginMax(nameCategory);
+				int valMin = admin.nbPluginMin(nameCategory);
+
+				if(valMax==valMin){
+					label = new JLabel("Nombre de plugins à sélectionner : "+valMax);
+				}
+				else {
+					if(valMax == 10){
+						label = new JLabel("Nombre de plugins à sélectionner : "+valMin+" à n plugins");
+					}
+					else{
+						label = new JLabel("Nombre de plugins à sélectionner : "+valMin+" à "+valMax+" plugins");
+					}
+				}
+
 				if(values.contains(p.getName())){
 					panelMain.add(createSection(p,nameCategory,true));
 				}		
@@ -132,8 +150,11 @@ class MenuConfig extends JFrame
 			}
 
 			scrollPane = new JScrollPane(panelMain);        
-	        //SpringUtilities.makeCompactGrid(panelMain, 5, 1, 6, 6, 6, 6);
-			return scrollPane;
+			global = new JPanel();
+			global.add(label);
+			global.add(scrollPane);
+	        SpringUtilities.makeCompactGrid(global, 2, 1, 6, 6, 6, 6);
+			return global;
 		}
 
         return null;

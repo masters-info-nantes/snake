@@ -4,36 +4,35 @@ package controllerArrow;
 import snakecore.interfaces.Controller;
 import snakecore.enums.Direction;
 import java.awt.event.KeyEvent;
+import snakecore.Data;
 
 public class ControllerArrow implements Controller {
 
-	Direction direction;
+	Data data;
 
 	public ControllerArrow()
 	{
-		direction = Direction.RIGHT;
+
+	}
+	
+	public void setData(Data data){
+		this.data = data;
 	}
 
 	@Override
-	public Direction getLastDirection()
-	{
-		return direction;
-	}
-		
-	@Override
 	public void updateEvent(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.VK_RIGHT) { // touche flèche droite
-			if (direction!=Direction.LEFT)
-				direction = Direction.RIGHT;
+			if (data.snake.getDirection()!=Direction.LEFT)
+				data.snake.setDirection(Direction.RIGHT);
 		} else if (event.getKeyCode() == KeyEvent.VK_LEFT) { // touche flèche gauche
-			if (direction!=Direction.RIGHT)
-				direction = Direction.LEFT;
+			if (data.snake.getDirection()!=Direction.RIGHT)
+				data.snake.setDirection(Direction.LEFT);
 		} else if (event.getKeyCode() == KeyEvent.VK_UP) { // touche flèche haut
-			if (direction!=Direction.BOTTOM)	
-				direction = Direction.TOP;
+			if (data.snake.getDirection()!=Direction.BOTTOM)	
+				data.snake.setDirection(Direction.TOP);
 		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) { // touche flèche bas
-			if (direction!=Direction.TOP)	
-				direction = Direction.BOTTOM;
+			if (data.snake.getDirection()!=Direction.TOP)	
+				data.snake.setDirection( Direction.BOTTOM);
 		}
 	}	
 }
