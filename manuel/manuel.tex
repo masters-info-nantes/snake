@@ -23,7 +23,7 @@
 \lstset{style=customstyle}
 
 \title{MGS plugin framework manual}
-\author{Antoine Forgerou \and David Drevet \and Jérémy Bardon}
+\author{Antoine Forgerou \and Jérémy Bardon}
 \date{}
 	
 \begin{document}
@@ -42,14 +42,14 @@
 Le framework MGS permet de gérer de manière transparente la modularité des 
 applications basées sur l'utilisation de plugins. 
 \\\\
-Plutot que d'obliger les utilisateurs à remplir de long fichiers de configurations, 
+Plutôt que d'obliger les utilisateurs à remplir de long fichiers de configurations, 
 nous avons choisi le plus possible de nous concentrer sur une architecture de 
 fichier la moins contraignante possible.
 \end{abstract}
 
 \section{Recommandations et pré-requis}
 L'ensemble du framework et des plugins sont tous gérés sous la forme de projets 
-\emph{maven}. Il est donc necessaire d'avoir cet outil installé pour développer 
+\emph{maven}. Il est donc nécessaire d'avoir cet outil installé pour développer 
 la plateforme.
 \\\\
 Notez qu'il est tout à fait possible d'utiliser le framework sous forme de d'archive 
@@ -57,7 +57,7 @@ Notez qu'il est tout à fait possible d'utiliser le framework sous forme de d'ar
 maven permet de faciliter l'intégration des dépendances entre la plateforme, les 
 plugins principaux et les plugins secondaires.
 \\\\
-Pour des raisons de clareté, tout les chemins indiqués dans ce manuel ont pour racine 
+Pour des raisons de clarté, tout les chemins indiqués dans ce manuel ont pour racine 
 le dossier du projet \emph{snake} cloné depuis GitHub.
 
 \section{Installation}
@@ -109,15 +109,12 @@ Il est necessaire de changer la valeur de \emph{pluginspath} afin qu'elle corres
 
 \subsection{Compiler les plugins et démarrer le jeu}
 Les plugins se trouvent dans le répertoire \emph{/plugins}. Avant de tous les compiler 
-et les importer dans la plateforme, il est necessaire d'installer les plugins 
-principaux \emph{platforminspector} et \emph{snakecore} afin de pouvoir compiler 
-leurs plugins secondaires par la suite.
+et les importer dans la plateforme, il est nécessaire d'installer les plugins 
+principaux -- si ils ont des plugins secondaires -- afin de pouvoir compiler 
+ces derniers par la suite.
 
 \begin{lstlisting}[language=bash,caption=Installation des plugins principaux]
 $ cd /plugins/snakecore/
-$ mvn install
-
-$ .cd /plugins/platforminspector/
 $ mvn install
 \end{lstlisting}
 
@@ -171,7 +168,7 @@ comment il peut être utilisé.
 		classique ce sera une interface définie par un plugin runnable.\\
 		
 		mainClass & Classe principale qui sera chargée par le framework. 
-		Elle doit implémenter ou hériter de celle donnée par la categorie.\\
+		Elle doit implémenter ou hériter de celle donnée par la catégorie.\\
 	\end{tabular}	
 \caption{Paramètres d'un fichier plugin.txt}
 \end{table}
@@ -308,7 +305,7 @@ $ cd /plugins/
 $ ./importPluginsOnPlatform.sh
 \end{lstlisting}
 
-Avant d'importer les plugins il est necessaire d'installer le plugin principal 
+Avant d'importer les plugins il est nécessaire d'installer le plugin principal 
 afin de pouvoir satisfaire la dépendance des plugins secondaire par rapport 
 à ce dernier.
 \\\\
@@ -316,7 +313,7 @@ Un fois l'importation terminée, tout les plugins seront présents -- sous la fo
 d'archives \emph{jar} -- dans le répertoire \emph{/platform/resources/plugins/}.
 
 La dernière chose à faire est de dire au framework de démarrer notre plugin 
-\emph{hello} au démarage. Pour cela, il faut renseigner le nom du plugin 
+\emph{hello} au démarrage. Pour cela, il faut renseigner le nom du plugin 
 -- nom du fichier .jar -- dans le paramètre \emph{startplugin} du fichier de 
 configuration du framework.
 
@@ -407,7 +404,7 @@ qui sera lancé.
 Tout les plugins que la platforme utilise doivent être placés dans son sous-
 répertoire \emph{resources/plugins} sous forme d'archives jar.
 \\\\
-Pour faciler le développement et l'installation de tout les plugins d'un seul 
+Pour faciliter le développement et l'installation de tout les plugins d'un seul 
 coup nous avons créer le script bash \emph{/plugins/importPluginsOnPlatform.sh}.
 Ce dernier permet de compiler tout les plugins et de les importer automatiquement
 dans la platforme.
