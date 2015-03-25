@@ -1,12 +1,13 @@
 package fr.univnantes.mgsframework;
 
+import java.io.File;
 import java.io.IOException;
 
 public class App {
 	public static void main(String[] args) {
 
 		System.out.println("Framework starts\n----------------");
-		
+		System.out.println(new File("toto.txt").getAbsolutePath());
 		Framework framework = Framework.getInstance();
 		try {
 			framework.init();

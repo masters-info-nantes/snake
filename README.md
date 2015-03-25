@@ -16,14 +16,14 @@ $ mvn install
 ```
 
 ### Compile plugins
-Change your plugins path in *platform/resources/settings.txt*.
-Now, lets install the plugin game to be able to import all plugins after:
+Now, lets install the core plugin to be able to import all plugins after:
 
 ```
 $ cd ../plugins/snakecore
 $ mvn install
-
 ```
+
+Note this step is required because we developed secondary plugins with maven.
 
 ### Import plugins in platform
 Once, the main plugins installed, import all plugins in the platform :

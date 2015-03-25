@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -114,6 +115,7 @@ public class PluginLoader {
 	 * @return plugin configuration as Plugin object
 	 * @throws IOException report to the exception message
 	 */
+	@SuppressWarnings("resource")
 	private Plugin loadPluginConfiguration(String pluginName) throws IOException {
 		
 		// If the plugin was allready loaded
@@ -131,15 +133,17 @@ public class PluginLoader {
 		InputStream configFile;
 		Properties configReader = new Properties();
 
-		try {
-			URLClassLoader configLoader = new URLClassLoader(new URL[]{ new URL("file://" + this.pluginsPath + "/" + pluginName) });
-			configFile = configLoader.getResourceAsStream("plugin.txt");			
+		try {			
+			ZipFile jarFile = new ZipFile(this.pluginsPath + "/" + pluginName);
+			ZipEntry settingsFile = jarFile.getEntry("plugin.txt");
+			
+			if(settingsFile == null){
+				throw new FileNotFoundException("Config file missing for " + pluginName + " plugin. Please add plugin.txt file in plugin directory.");				
+			}
+			
+			configFile = jarFile.getInputStream(settingsFile);			
 			configReader.load(configFile);			
-			configLoader.close();
 		} 
-		catch (FileNotFoundException e) {
-			throw new FileNotFoundException("Config file missing for " + pluginName + " plugin. Please add plugin.txt file in plugin directory.");
-		}
 		catch (IOException e) {
 			throw new IOException("Malformed configuration file for plugin " + pluginName + ". Please check your plugin.txt file.");
 		}
@@ -200,7 +204,7 @@ public class PluginLoader {
 
 		ZipInputStream jarFile = null;
 		try {
-			URL pluginFile = new URL("file://" + this.pluginsPath + "/" + plugin.getName());
+			URL pluginFile = new URL(new URL("file:"), this.pluginsPath + "/" + plugin.getName());
 			jarFile = new ZipInputStream(pluginFile.openStream());			
 		} 
 		catch (MalformedURLException e) {

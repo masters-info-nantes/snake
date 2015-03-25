@@ -89,7 +89,7 @@ répertoire \emph{/platform/resources}.
 \begin{table}[h]
 \centering
 	\begin{tabular}{lp{9cm}}
-		pluginspath & Chemin absolu vers le dossier qui contient tout les plugins.\\
+		pluginspath & Chemin absolu ou relatif vers le dossier qui contient tout les plugins.\\
 					 
 		startplugin & Nom du plugin\footnote{Il s'agit du nom du dossier du 
 		plugin} à charger au démarrage. Obligatoirement runnable.\\	
@@ -132,7 +132,7 @@ faut importer la plateforme dans Eclipse est lancer la classe principale \emph{A
 
 \begin{lstlisting}[language=bash,caption=Démarrer la plateforme]
 $ cd /platform/
-$ mvn eclipse:eclipse
+$ mvn exec:java
 \end{lstlisting}
 
 \section{Les plugins}
