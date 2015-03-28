@@ -1,2 +1,0 @@
-mainClass=maptest.MapTest
-category=snakecore.interfaces.Map
