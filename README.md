@@ -4,8 +4,11 @@ on a brand new plugin framework called MGS.
 
 **TODO files are now respectively in *platform* and *plugins* directories.**
 
-## Usage
-See the user manual (in french) located in the manual sub-directory
+## Repository organization
+* manuel - Platform guide (in french)
+* report - Report on the snake game (in french)
+* platform - Source code of the platform
+* plugins - Source code of plugins
 
 ## Run it
 The first thing to do is to install the framework in your maven repositories.
